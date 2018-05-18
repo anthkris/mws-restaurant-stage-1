@@ -105,7 +105,13 @@ nav h1 a {
   background-color: #eee;
   font-size: 17px;
   margin: 0;
-  width: calc(50% - 80px);
+	width: 100%;
+}
+
+@media screen and (min-width: 800px) {
+	#breadcrumb {
+		width: calc(50% - 80px);
+	}
 }
 
 /* Display list items side by side */
@@ -235,7 +241,7 @@ nav h1 a {
 
 .inside #map-container {
   background: blue none repeat scroll 0 0;
-  height: 87%;
+  height: 100%;
   position: fixed;
   right: 0;
   top: 80px;
@@ -252,6 +258,12 @@ nav h1 a {
   bottom: 0;
   position: absolute;
   width: 100%;
+}
+
+@media screen and (min-width: 800px) {
+	.inside #footer {
+		width: calc(50% - 50px);
+	}
 }
 
 #restaurant-name {
@@ -287,7 +299,8 @@ nav h1 a {
 	width: 90%;
 }
 
-#restaurant-container, #reviews-container {
+#restaurant-container,
+#reviews-container {
   border-bottom: 1px solid #d9d9d9;
   border-top: 1px solid #fff;
   padding: 140px 40px 30px;
