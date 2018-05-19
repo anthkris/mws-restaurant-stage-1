@@ -1,6 +1,11 @@
 @charset "utf-8";
 /* CSS Document */
 
+html,
+body {
+	width: 100%;
+}
+
 body,
 td,
 th,
@@ -66,6 +71,7 @@ section {
 #maincontent {
   background-color: #f3f3f3;
   min-height: 100%;
+	max-width: 100%;
 }
 
 #footer {
@@ -206,6 +212,7 @@ nav h1 a {
 	display: flex;
 	flex-wrap: wrap;
 	flex-direction: row;
+	justify-content: center;
   list-style: outside none none;
   margin: 0;
   padding: 30px 15px 60px;
@@ -218,7 +225,7 @@ nav h1 a {
   font-family: Arial,sans-serif;
   margin: 15px 0;
   min-height: 380px;
-	min-width: 270px;
+	min-width: 250px;
   padding: 25px;
   text-align: center;
 }
