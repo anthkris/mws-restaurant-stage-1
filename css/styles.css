@@ -144,7 +144,7 @@ nav h1 a {
   display: none;
 }
 
-@media screen and (min-width: 500px) and (max-width: 799px) {
+@media screen and (min-width: 650px) {
 	#map {
 		background-color: #ccc;
 		display: block;
@@ -216,12 +216,11 @@ nav h1 a {
   background-color: #fff;
   border: 2px solid #ccc;
   font-family: Arial,sans-serif;
-  margin: 15px;
+  margin: 15px 0;
   min-height: 380px;
 	min-width: 270px;
-  padding: 0 30px 25px;
-  text-align: left;
-	width: 100%;
+  padding: 25px;
+  text-align: center;
 }
 
 #restaurants-list .restaurant-img {
@@ -262,29 +261,45 @@ nav h1 a {
   text-transform: uppercase;
 }
 
-.container {
-	margin: 0 auto;
+.columns {
 	width: 100%;
 }
 
-@media screen and (min-width: 800px) {
-	/* #restaurants-list {
-		justify-content: space-between;
-	} */
-
-	.columns {
-		width: 33%;
-	}
+.container {
+	margin: 0 auto;
+	max-width: 1200px;
+	width: 100%;
 }
-
 @media screen and (min-width: 500px) and (max-width: 799px) {
+	#restaurants-list {
+		justify-content: center;
+	}
+
 	.columns {
-		width: 50%;
+		width: 70%;
 	}
 
 	.container {
 		margin: 0 auto;
 		width: 90%;
+	}
+}
+
+@media screen and (min-width: 800px) {
+	.columns {
+		width: calc(50% - 90px);
+	}
+}
+
+@media screen and (min-width: 800px) {
+	#restaurants-list {
+		justify-content: space-between;
+	}
+}
+
+@media screen and (min-width: 1032px) {
+	.columns {
+		width: calc(33% - 90px);
 	}
 }
 
