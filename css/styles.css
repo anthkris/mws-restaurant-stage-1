@@ -139,43 +139,65 @@ nav h1 a {
 }
 
 /* ====================== Map ====================== */
+
 #map {
-  height: 400px;
-  width: 100%;
-  background-color: #ccc;
+  display: none;
 }
+
+@media screen and (min-width: 500px) and (max-width: 799px) {
+	#map {
+		background-color: #ccc;
+		display: block;
+	  height: 400px;
+	  width: 100%;
+	}
+}
+
 /* ====================== Restaurant Filtering ====================== */
+
 .filter-options {
 	align-items: center;
 	background-color: #3397DB;
 	display: flex;
-  height: 50px;
+	margin: 0 auto;
+  min-height: 50px;
 	width: 100%;
 }
 
 .filter-options h2 {
   color: white;
-	display: inline;
   font-size: 1rem;
   font-weight: normal;
   line-height: 1;
   margin: 0 20px;
+	padding-top: 1em;
 }
 
 .filter-options select {
   background-color: white;
   border: 1px solid #fff;
+	display: inline;
   font-family: Arial,sans-serif;
   font-size: 11pt;
   height: 35px;
   letter-spacing: 0;
   margin: 10px;
   padding: 0 10px;
-  width: 200px;
+  width: calc(100% - 20px);
 }
 
-.filter-options .container {
-	display: inline;
+@media screen and (min-width: 650px) {
+	.filter-options h2 {
+		display: inline;
+	}
+
+	.filter-options select {
+		width: calc(40% - 40px);
+	}
+
+	.filter-options .container {
+		display: inline;
+	}
 }
 
 /* ====================== Restaurant Listing ====================== */
@@ -184,7 +206,6 @@ nav h1 a {
 	display: flex;
 	flex-wrap: wrap;
 	flex-direction: row;
-	justify-content: space-between;
   list-style: outside none none;
   margin: 0;
   padding: 30px 15px 60px;
@@ -197,9 +218,10 @@ nav h1 a {
   font-family: Arial,sans-serif;
   margin: 15px;
   min-height: 380px;
+	min-width: 270px;
   padding: 0 30px 25px;
   text-align: left;
-  max-width: 270px;
+	width: 100%;
 }
 
 #restaurants-list .restaurant-img {
@@ -242,18 +264,27 @@ nav h1 a {
 
 .container {
 	margin: 0 auto;
-	width: 90%;
+	width: 100%;
 }
 
 @media screen and (min-width: 800px) {
+	/* #restaurants-list {
+		justify-content: space-between;
+	} */
+
 	.columns {
 		width: 33%;
 	}
 }
 
-@media screen and (min-width: 500px) {
+@media screen and (min-width: 500px) and (max-width: 799px) {
 	.columns {
 		width: 50%;
+	}
+
+	.container {
+		margin: 0 auto;
+		width: 90%;
 	}
 }
 
