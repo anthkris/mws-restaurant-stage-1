@@ -359,6 +359,7 @@ nav h1 a {
 
 #restaurant-img {
 	width: 100%;
+	border-radius: 20px 0 20px 0;
 }
 
 #restaurant-address {
@@ -403,20 +404,48 @@ nav h1 a {
 #reviews-list li {
   background-color: #fff;
   border: 2px solid #f3f3f3;
+	border-radius: 10px 0 10px 0;
   display: block;
   list-style-type: none;
   margin: 0 0 30px;
   overflow: hidden;
-  padding: 0 20px 20px;
   position: relative;
-}
-
-#reviews-list li p {
-  margin: 0 0 10px;
 }
 
 #restaurant-hours td {
   color: #666;
+}
+
+.restaurant-rating {
+	background: #f58500;
+	border-radius: 5px;
+	color: #fff;
+	display: inline;
+	padding: 10px;
+	text-transform: uppercase;
+}
+
+.review-container,
+.reviewer-name {
+	padding: 20px;
+}
+
+.review-comments {
+	margin: 20px 0 0;
+}
+
+.review-date {
+	color: #aaa;
+	margin-left: auto;
+	text-shadow: 1px 1px 2px black;
+}
+
+.reviewer-name {
+	align-items: center;
+	background: #252831;
+	color: #fff;
+	display: flex;
+	margin-top: 0;
 }
 
 @media screen and (min-width: 750px) {
