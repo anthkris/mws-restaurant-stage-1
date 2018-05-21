@@ -249,6 +249,7 @@ nav h1 a {
   max-width: 100%;
   min-height: 248px;
   min-width: 100%;
+	object-fit: cover;
 }
 
 #restaurants-list li h1 {
@@ -309,9 +310,7 @@ nav h1 a {
 	.columns {
 		width: calc(50% - 90px);
 	}
-}
 
-@media screen and (min-width: 800px) {
 	#restaurants-list {
 		justify-content: space-between;
 	}
@@ -358,8 +357,8 @@ nav h1 a {
 }
 
 #restaurant-img {
-	width: 100%;
 	border-radius: 20px 0 20px 0;
+	max-width: 100%;
 }
 
 #restaurant-address {
@@ -449,6 +448,10 @@ nav h1 a {
 }
 
 @media screen and (min-width: 750px) {
+	picture {
+		margin: 0 auto;
+	}
+
 	.inside #footer {
 		width: calc(50% - 50px);
 	}
@@ -463,6 +466,8 @@ nav h1 a {
 
 	#restaurant-container,
 	#reviews-container {
+		display: flex;
+		flex-direction: column;
 		margin: 0;
 		max-width: 910px;
 		width: calc(50% - 80px);
