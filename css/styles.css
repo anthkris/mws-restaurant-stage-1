@@ -30,12 +30,12 @@ li {
 }
 
 a {
-	color: orange;
+	color: #4799cc;
 	text-decoration: none;
 }
 
 a:hover, a:focus {
-	color: #3397db;
+	color: #3a7ca5;
 	text-decoration: none;
 }
 
@@ -68,20 +68,50 @@ section {
 	display: block;
 }
 
-#maincontent {
+#main-content {
   background-color: #f3f3f3;
+	display: flex;
+	flex-direction: column;
   min-height: 100%;
 	max-width: 100%;
 }
 
 #footer {
   background-color: #444;
-  color: #aaa;
+  color: #d8d8d8;
   font-size: 8pt;
   letter-spacing: 1px;
   padding: 25px;
   text-align: center;
   text-transform: uppercase;
+}
+
+#footer a {
+	color: #59bfff;
+}
+
+/* ====================== Skip Nav ====================== */
+#skip a,
+.inside #skip a {
+	position: absolute;
+	left: -10000px;
+	top: auto;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+}
+
+#skip a:focus,
+.inside #skip a:focus  {
+	background: #003459;
+	border-radius: 0 0 5px 5px;
+	color: #fff;
+  left: 0;
+	height: auto;
+	padding: 5px;
+	position: absolute;
+  width: 200px;
+  z-index: 1100;
 }
 
 /* ====================== Navigation ====================== */
@@ -133,13 +163,13 @@ nav h1 a {
 
 /* Add a color to all links inside the list */
 #breadcrumb li a {
-  color: #0275d8;
+	color: #a34300;
   text-decoration: none;
 }
 
 /* Add a color on mouse-over */
 #breadcrumb li a:hover {
-  color: #01447e;
+  color: #bb4d00;
   text-decoration: underline;
 }
 
@@ -184,9 +214,20 @@ nav h1 a {
 
 /* ====================== Restaurant Filtering ====================== */
 
+/* Accessibility workaround hiding text for screen readers only
+Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
+.accessibilty-label {
+	position:absolute;
+	left:-10000px;
+	top:auto;
+	width:1px;
+	height:1px;
+	overflow:hidden;
+}
+
 .filter-options {
 	align-items: center;
-	background-color: #3397DB;
+	background-color: #003459;
 	display: flex;
 	margin: 0 auto;
   min-height: 50px;
@@ -238,7 +279,7 @@ nav h1 a {
 	justify-content: center;
   list-style: outside none none;
   margin: 0;
-  padding: 30px 15px 60px;
+	padding: 30px 15px 60px;
   text-align: center;
 }
 
@@ -263,8 +304,8 @@ nav h1 a {
 	object-fit: cover;
 }
 
-#restaurants-list li h1 {
-  color: #f18200;
+#restaurants-list li h2 {
+  color: #bb4d00;
   font-family: Arial,sans-serif;
   font-size: 14pt;
   font-weight: 200;
@@ -280,7 +321,7 @@ nav h1 a {
 }
 
 #restaurants-list li a {
-  background-color: orange;
+  background-color: #bb4d00;
   border-bottom: 3px solid #eee;
   color: #fff;
   display: inline-block;
@@ -331,6 +372,22 @@ nav h1 a {
 	.columns {
 		width: calc(33% - 90px);
 	}
+
+	#restaurants-list {
+		justify-content: flex-start;
+	}
+
+	#restaurants-list li {
+		margin-right: calc(15%/(3*2));
+	}
+
+	#restaurants-list li:nth-child(3n + 2) {
+		margin: 15px calc(15%/(3*2));
+	}
+
+	#restaurants-list li:nth-child(3n) {
+		margin: 15px 0 15px calc(15%/(3*2));
+	}
 }
 
 /* ====================== Restaurant Details ====================== */
@@ -344,6 +401,7 @@ nav h1 a {
 .inside #map-container {
   background: blue none repeat scroll 0 0;
   height: 50%;
+	order: 2;
   position: relative;
   width: 100%;
 }
@@ -357,7 +415,7 @@ nav h1 a {
 }
 
 #restaurant-name {
-  color: #f18200;
+  color: #bb4d00;
   font-family: Arial,sans-serif;
   font-size: 1.2em;
   font-weight: 200;
@@ -399,7 +457,7 @@ nav h1 a {
 }
 
 #reviews-container h2 {
-  color: #f58500;
+  color: #bb4d00;
   font-size: 1.4em;
   font-weight: 300;
   letter-spacing: -1px;
@@ -427,7 +485,7 @@ nav h1 a {
 }
 
 .restaurant-rating {
-	background: #f58500;
+	background: #bb4d00;
 	border-radius: 5px;
 	color: #fff;
 	display: inline;
@@ -452,7 +510,7 @@ nav h1 a {
 
 .reviewer-name {
 	align-items: center;
-	background: #252831;
+	background: #333;
 	color: #fff;
 	display: flex;
 	margin-top: 0;

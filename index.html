@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -10,29 +10,35 @@
 </head>
 
 <body>
+  <!-- Skip link from WebAIM: https://webaim.org/techniques/css/invisiblecontent/#skipnavlinks -->
+  <div id="skip"><a href="#restaurants">Skip to Main Content</a></div>
   <header>
     <nav>
       <h1><a href="/">Restaurant Reviews</a></h1>
     </nav>
   </header>
 
-  <main id="maincontent">
+  <main id="main-content">
     <section id="map-container">
       <div id="map"></div>
     </section>
-    <section>
+    <section id="restaurants">
       <div class="filter-options">
         <div class="container">
           <h2>Filter Results</h2>
+          <label for="neighborhoods-select" class="accessibilty-label">Select a Neighborhood</label>
           <select id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()">
             <option value="all">All Neighborhoods</option>
           </select>
+          <label for="cuisines-select" class="accessibilty-label">Select a type of Cuisine</label>
           <select id="cuisines-select" name="cuisines" onchange="updateRestaurants()">
             <option value="all">All Cuisines</option>
           </select>
         </div>
       </div>
       <div class="container">
+        <!-- Solution for informing SR users of change in context from https://simplyaccessible.com/article/spangular-accessibility/#aria -->
+        <div role="status" class="accessibilty-label" aria-live="polite" aria-atomic="true">Showing <span id="restaurants-filtered"></span> of <span id="restaurants-total"></span></div>
         <ul id="restaurants-list"></ul>
       </div>
     </section>

@@ -1,8 +1,8 @@
 let restaurants,
   neighborhoods,
-  cuisines
-var map
-var markers = []
+  cuisines;
+var map;
+var markers = [];
 
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
@@ -80,6 +80,7 @@ window.initMap = () => {
     center: loc,
     scrollwheel: false
   });
+  console.log(self.map);
   updateRestaurants();
 }
 
@@ -89,6 +90,8 @@ window.initMap = () => {
 updateRestaurants = () => {
   const cSelect = document.getElementById("cuisines-select");
   const nSelect = document.getElementById("neighborhoods-select");
+  const filteredRestaurantNum = document.getElementById("restaurants-filtered");
+  const totalRestaurantNum = document.getElementById("restaurants-total");
 
   const cIndex = cSelect.selectedIndex;
   const nIndex = nSelect.selectedIndex;
@@ -96,14 +99,16 @@ updateRestaurants = () => {
   const cuisine = cSelect[cIndex].value;
   const neighborhood = nSelect[nIndex].value;
 
-  DBHelper.fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, (error, restaurants) => {
+  DBHelper.fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, (error, restaurants, total) => {
     if (error) { // Got an error!
       console.error(error);
     } else {
       resetRestaurants(restaurants);
       fillRestaurantsHTML();
+      filteredRestaurantNum.innerHTML = restaurants.length;
+      totalRestaurantNum.innerHTML = total.length;
     }
-  })
+  });
 }
 
 /**
@@ -151,7 +156,7 @@ createRestaurantHTML = (restaurant) => {
   image.alt = restaurant.photograph.alt;
   li.append(image);
 
-  const name = document.createElement("h1");
+  const name = document.createElement("h2");
   name.innerHTML = restaurant.name;
   li.append(name);
 
@@ -168,7 +173,7 @@ createRestaurantHTML = (restaurant) => {
   more.href = DBHelper.urlForRestaurant(restaurant);
   li.append(more)
 
-  return li
+  return li;
 }
 
 /**
