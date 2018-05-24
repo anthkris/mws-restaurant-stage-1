@@ -1,0 +1,70 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+  },
+  "globals": {
+    "DBHelper": false,
+    "google": false
+  },
+  "extends": [
+    "eslint:recommended"
+  ],
+  "rules": {
+      "indent": [
+          "error",
+          2
+      ],
+      "quotes": [
+          "error",
+          "single"
+      ],
+      "semi": [
+          "error",
+          "always"
+      ],
+      "capitalized-comments": [
+          "error",
+          "always"
+      ],
+      "spaced-comment": ["error", "always", {
+        "line": {
+            "markers": ["/"],
+            "exceptions": ["-", "+"]
+        },
+        "block": {
+            "markers": ["!"],
+            "exceptions": ["*"],
+            "balanced": true
+        }
+    }],
+    "func-call-spacing": [
+      "error",
+      "never"
+    ],
+    "function-paren-newline": [
+      "error",
+      "multiline"
+    ],
+    "space-before-function-paren": [
+      "error",
+      "never"
+    ],
+    "curly": [
+      "error",
+      "all"
+    ],
+    "block-spacing": "error",
+    "space-before-blocks": "error",
+    "keyword-spacing": [
+      "error",
+      {
+        "after": true ,
+        "before": true
+      }
+    ]
+  },
+  "plugins": [
+    "html"
+  ]
+}
