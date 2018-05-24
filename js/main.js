@@ -150,9 +150,9 @@ createRestaurantHTML = (restaurant) => {
   image.srcset = `
     ${DBHelper.imageUrlForRestaurant(restaurant)} 300w,
     ${DBHelper.mediumSourceUrlForRestaurant(restaurant)} 600w,
-    ${DBHelper.imageUrlForRestaurant(restaurant)} 1032w
+    ${DBHelper.largeSourceUrlForRestaurant(restaurant)} 800w
   `;
-  image.sizes = "20vw";
+  image.sizes = "(min-width: 800px) 40vw, (min-width: 1032px) 20vw, 60vw";
   image.alt = restaurant.photograph.alt;
   li.append(image);
 

@@ -193,7 +193,8 @@ nav h1 a {
 
 @media screen and (min-width: 1950px) {
 	#breadcrumb-container {
-		width: calc(40% - 80px);
+		padding: 10px 60px 16px;
+		width: calc(40% - 120px);
 	}
 }
 
@@ -398,10 +399,9 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
   z-index: 1000;
 }
 
-.inside #map-container {
+.inside #map-cont ainer {
   background: blue none repeat scroll 0 0;
   height: 50%;
-	order: 2;
   position: relative;
   width: 100%;
 }
@@ -427,7 +427,10 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
 
 #restaurant-img {
 	border-radius: 20px 0 20px 0;
-	max-width: 100%;
+	margin: 0 auto;
+	max-width: 800px;
+	object-fit: cover;
+	width: 100%;
 }
 
 #restaurant-address {
@@ -441,7 +444,7 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
   font-size: 1em;
   font-weight: 300;
   letter-spacing: 10px;
-  margin: 0 0 20px;
+  margin: 2px 0 20px;
   padding: 2px 0;
   text-align: center;
   text-transform: uppercase;
@@ -517,10 +520,6 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
 }
 
 @media screen and (min-width: 750px) {
-	picture {
-		margin: 0 auto;
-	}
-
 	.inside #footer {
 		width: calc(50% - 50px);
 	}
@@ -546,6 +545,10 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
 	  padding: 140px 40px 30px;
 	}
 
+	#restaurant-cuisine {
+		margin-top: 5px;
+	}
+
 	#reviews-container {
 	  padding: 30px 40px 80px;
 	}
@@ -558,6 +561,14 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
 
 	#restaurant-container,
 	#reviews-container {
-		width: calc(40% - 80px);
+		width: calc(40% - 120px);
+	}
+
+	#restaurant-container {
+	  padding: 140px 60px 30px;
+	}
+
+	#reviews-container {
+	  padding: 30px 60px 80px;
 	}
 }
