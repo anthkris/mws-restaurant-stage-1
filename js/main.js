@@ -5,11 +5,20 @@ var map;
 var markers = [];
 
 /**
- * Fetch neighborhoods and cuisines as soon as the page is loaded.
+ * Fetch neighborhoods and cuisines and register ServiceWorker as soon as the page is loaded.
  */
 document.addEventListener('DOMContentLoaded', (event) => {
   fetchNeighborhoods();
   fetchCuisines();
+
+  if (!navigator.serviceWorker) {
+    return;
+  }
+  navigator.serviceWorker.register('sw.js').then((reg) => {
+      console.log('ServiceWorker registered');
+    }).catch((err) => {
+      console.log('ServiceWorker failed: ', err);
+  });
 });
 
 /**
@@ -80,7 +89,6 @@ window.initMap = () => {
     center: loc,
     scrollwheel: false
   });
-  console.log(self.map);
   updateRestaurants();
 };
 
