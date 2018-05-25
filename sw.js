@@ -9,7 +9,9 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(STATICCACHENAME).then((cache) => {
       return cache.addAll([
+        '/js/dbhelper.js',
         '/js/main.js',
+        '/js/restaurantinfo.js',
         '/css/styles.css',
         '/data/restaurants.json',
         'index.html',
