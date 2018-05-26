@@ -152,6 +152,9 @@ createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
   li.className = 'columns';
 
+  const imageDiv = document.createElement('div');
+  imageDiv.className = 'aspect-ratio-container';
+  li.append(imageDiv);
   const image = document.createElement('img');
   image.className = 'restaurant-img';
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
@@ -162,7 +165,7 @@ createRestaurantHTML = (restaurant) => {
   `;
   image.sizes = '(min-width: 800px) 40vw, (min-width: 1032px) 20vw, 60vw';
   image.alt = restaurant.photograph.alt;
-  li.append(image);
+  imageDiv.append(image);
 
   const name = document.createElement('h2');
   name.innerHTML = restaurant.name;

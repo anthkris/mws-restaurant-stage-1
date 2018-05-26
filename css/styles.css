@@ -91,6 +91,22 @@ section {
   color: #59bfff;
 }
 
+/* Aspect ratio to prevent document reflow
+Technique from https://justmarkup.com/log/2015/11/definining-aspect-ratio-to-prevent-reflow/ */
+.aspect-ratio-container {
+  position: relative;
+  padding-bottom: 80%;
+  height: 0;
+}
+
+.aspect-ratio-container img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
 /* ====================== Skip Nav ====================== */
 #skip a,
 .inside #skip a {
@@ -273,6 +289,10 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
 }
 
 /* ====================== Restaurant Listing ====================== */
+#restaurants {
+  min-height: calc(50px + (200px * 10));
+}
+
 #restaurants-list {
   background-color: #f3f3f3;
   display: flex;
@@ -300,9 +320,7 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
   background-color: #ccc;
   display: block;
   margin: 0;
-  max-width: 100%;
-  min-height: 248px;
-  min-width: 100%;
+  width: 100%;
   object-fit: cover;
 }
 

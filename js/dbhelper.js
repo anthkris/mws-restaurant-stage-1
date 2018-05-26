@@ -149,6 +149,10 @@ class DBHelper {
   /**
    * Restaurant image URLs.
    */
+  static progressiveImageLoading(restaurant) {
+    return (`/images_responsive/${restaurant.photograph.progressive}`);
+  }
+
   static imageUrlForRestaurant(restaurant) {
     return (`/images_responsive/${restaurant.photograph.small}`);
   }
