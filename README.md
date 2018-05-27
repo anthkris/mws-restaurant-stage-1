@@ -4,25 +4,30 @@
 
 ## Project Overview: Stage 1
 
-For the **Restaurant Reviews** projects, you will incrementally convert a static webpage to a mobile-ready web application. In **Stage One**, you will take a static design that lacks accessibility and convert the design to be responsive on different sized displays and accessible for screen reader use. You will also add a service worker to begin the process of creating a seamless offline experience for your users.
+For stage one of the project, I worked to improve the site via:
 
-### Specification
+- Adding accessibility features, including:
+  - Changing the color palette to prevent color contrast issues
+  - Adding a skip navigation link
+  - Adding alt attributes to all images
+  - Adding labels to form elements
+  - Using ARIA, where appropriate
+- Implementing mobile-first design for all pages using:
+  - Flexbox techniques
+  - Image srcsets with sizes
+  - General design decisions (e.g. to hide the map on the main page on mobile views)
+- Implementing an offline-first design through the use of a service worker
 
-You have been provided the code for a restaurant reviews website. The code has a lot of issues. It’s barely usable on a desktop browser, much less a mobile device. It also doesn’t include any standard accessibility features, and it doesn’t work offline at all. Your job is to update the code to resolve these issues while still maintaining the included functionality. 
+## Tools Used
 
-### What do I do from here?
+- Grunt to make various image resolutions to be served up
+- ESLint and StyleLint to ensure adherence to the Udacity style guides
+- WebAIM WAVE and WorldSpace Attest to test for accessibility issues
 
-1. In this folder, start up a simple HTTP server to serve up the site files on your local computer. Python has some simple tools to do this, and you don't even need to know Python. For most people, it's already installed on your computer. 
+## Acknowledgements
 
-In a terminal, check the version of Python you have: `python -V`. If you have Python 2.x, spin up the server with `python -m SimpleHTTPServer 8000` (or some other port, if port 8000 is already in use.) For Python 3.x, you can use `python3 -m http.server 8000`. If you don't have Python installed, navigate to Python's [website](https://www.python.org/) to download and install the software.
+To help make the site the best I could make it, I used the following resources:
 
-2. With your server running, visit the site: `http://localhost:8000`, and look around for a bit to see what the current experience looks like.
-3. Explore the provided code, and make start making a plan to implement the required features in three areas: responsive design, accessibility and offline use.
-4. Write code to implement the updates to get this site on its way to being a mobile-ready website.
-
-### Note about ES6
-
-Most of the code in this project has been written to the ES6 JavaScript specification for compatibility with modern web browsers and future proofing JavaScript code. As much as possible, try to maintain use of ES6 in any additional JavaScript you write. 
-
-
-
+- Intrinsic Ratio for images: To minimize document reflow, I used the technique for defining intrinsic ratios for the images as described here: [Just Markup.com/](https://justmarkup.com/log/2015/11/definining-aspect-ratio-to-prevent-reflow/)
+- Skip Nav: I used the recommendations for an accessible skip navigation link from [WebAIM](https://webaim.org/techniques/css/invisiblecontent/#skipnavlink)
+- Informing screen reader users of a change in content: When a user filters the restaurants on the main page, a screen reader user would have no way of knowing that the content below had changed based on their filter choices. To fix this issue, I used a technique to announce changes to the user from [Simply Accessible.com](https://simplyaccessible.com/article/spangular-accessibility/#aria)

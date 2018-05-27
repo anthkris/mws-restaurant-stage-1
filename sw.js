@@ -37,7 +37,7 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  var requestUrl = new URL(event.request.url);
+  const requestUrl = new URL(event.request.url);
 
   if (requestUrl.pathname === '/') {
     event.respondWith(caches.match('/index.html'));
@@ -64,7 +64,7 @@ self.addEventListener('fetch', (event) => {
 });
 
 serveRestaurantPhoto = (request) => {
-  var storageUrl = request.url.replace(/-\d+px\.jpg$/, '');
+  const storageUrl = request.url.replace(/-\d+px\.jpg$/, '');
 
   return caches.open(CONTENTIMGSCACHE).then((cache) => {
     return cache.match(storageUrl).then((response) => {

@@ -13,6 +13,20 @@ class DBHelper {
   }
 
   /**
+   * Register service worker.
+   */
+  static registerServiceWorker() {
+    if (!navigator.serviceWorker) {
+      return;
+    }
+    navigator.serviceWorker.register('sw.js').then((reg) => {
+        console.log('ServiceWorker registered');
+      }).catch((err) => {
+        console.log('ServiceWorker failed: ', err);
+    });
+  }
+
+  /**
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
