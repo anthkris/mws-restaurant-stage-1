@@ -20,9 +20,9 @@ class DBHelper {
       return;
     }
     navigator.serviceWorker.register('sw.js').then((reg) => {
-        console.log('ServiceWorker registered');
-      }).catch((err) => {
-        console.log('ServiceWorker failed: ', err);
+      console.log('ServiceWorker registered');
+    }).catch((err) => {
+      console.log('ServiceWorker failed: ', err);
     });
   }
 
