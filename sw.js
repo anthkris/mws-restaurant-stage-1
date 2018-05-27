@@ -1,4 +1,4 @@
-const STATICCACHENAME = 'mws-reviews-static-v1';
+const STATICCACHENAME = 'mws-reviews-static-v2';
 const CONTENTIMGSCACHE = 'mws-restaurant-imgs';
 const ALLCACHES = [
   STATICCACHENAME,
