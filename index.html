@@ -13,14 +13,14 @@
   <!-- Skip link from WebAIM: https://webaim.org/techniques/css/invisiblecontent/#skipnavlinks -->
   <div id="skip"><a href="#restaurants">Skip to Main Content</a></div>
   <header>
-    <nav>
+    <nav id="header-nav" role="navigation">
       <h1><a href="/">Restaurant Reviews</a></h1>
     </nav>
   </header>
 
   <main id="main-content">
     <section id="map-container">
-      <div id="map"></div>
+      <div id="map" role="application" aria-label="Google map with restaurant locations marked"></div>
     </section>
     <section id="restaurants">
       <div class="filter-options">

@@ -17,15 +17,15 @@
   <!-- Beginning header -->
   <header>
     <!-- Beginning nav -->
-    <nav>
+    <nav id="header-nav" role="navigation">
       <h1><a href="/">Restaurant Reviews</a></h1>
     </nav>
     <!-- Beginning breadcrumb -->
-    <div id="breadcrumb-container">
+    <nav id="breadcrumb-container" role="navigation">
       <ul id="breadcrumb" >
         <li><a href="/">Home</a></li>
       </ul>
-    </div>
+    </nav>
     <!-- End breadcrumb -->
     <!-- End nav -->
   </header>
@@ -35,7 +35,7 @@
   <main id="main-content">
     <!-- Beginning map -->
     <section id="map-container">
-      <div id="map"></div>
+      <div id="map" role="application" aria-label="Google map with restaurant location marked"></div>
     </section>
     <!-- End map -->
     <!-- Beginning restaurant -->
