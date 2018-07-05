@@ -19,7 +19,7 @@ class DBHelper {
     if (!navigator.serviceWorker) {
       return;
     }
-    navigator.serviceWorker.register('sw.js').then((reg) => {
+    navigator.serviceWorker.register('sw_browserified.js').then((reg) => {
       console.log('ServiceWorker registered');
     }).catch((err) => {
       console.log('ServiceWorker failed: ', err);

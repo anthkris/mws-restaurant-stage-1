@@ -38,6 +38,19 @@ module.exports = function(grunt) {
         }]
       }
     },
+    browserify: {
+      dev: {
+        src: ['sw.js'],
+        dest: 'sw_browserified.js',
+        options: {
+          debug: true,
+          transform: [
+            ['babelify', {presets: 'es2015'}]
+          ],
+          extensions: ['.js'],
+        },
+      }
+    },
     clean: {
       dev: {
         src: ["images_responsive/"],
@@ -48,17 +61,16 @@ module.exports = function(grunt) {
     mkdir: {
       dev: {
         options: {
-          create: ["images"]
+          create: ["images_responsive"]
         },
       },
-    },
-
+    }
   });
 
   grunt.loadNpmTasks("grunt-responsive-images");
   grunt.loadNpmTasks("grunt-contrib-clean");
   grunt.loadNpmTasks("grunt-contrib-copy");
   grunt.loadNpmTasks("grunt-mkdir");
-  grunt.registerTask("default", ["clean", "mkdir", "responsive_images"]);
-
+  grunt.loadNpmTasks('grunt-browserify');
+  grunt.registerTask("default", ["clean", "mkdir", "responsive_images", "browserify"]);
 };
