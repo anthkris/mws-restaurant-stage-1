@@ -34,7 +34,7 @@ class DBHelper {
     if(id) {
       restaurantToFetch = `${DBHelper.DATABASE_URL}/${id}`;
     } else {
-      restaurantToFetch = DBHelper.DATABASE_URL
+      restaurantToFetch = DBHelper.DATABASE_URL;
     }
 
     return fetch(restaurantToFetch)
@@ -167,21 +167,21 @@ class DBHelper {
    * Restaurant image URLs.
    */
   static imageUrlForRestaurant(restaurant) {
-    if(restaurant.photograph == undefined) {
+    if (restaurant.photograph == undefined) {
       return (`/images_responsive/10-300_small.jpg`);
     }
     return (`/images_responsive/${restaurant.photograph}-300_small.jpg`);
   }
 
   static largeSourceUrlForRestaurant(restaurant) {
-    if(restaurant.photograph == undefined) {
+    if (restaurant.photograph == undefined) {
       return (`/images_responsive/10-800_large.jpg`);
     }
     return (`/images_responsive/${restaurant.photograph}-800_large.jpg`);
   }
 
   static mediumSourceUrlForRestaurant(restaurant) {
-    if(restaurant.photograph == undefined) {
+    if (restaurant.photograph == undefined) {
       return (`/images_responsive/10-600_medium.jpg`);
     }
     return (`/images_responsive/${restaurant.photograph}-600_medium.jpg`);
