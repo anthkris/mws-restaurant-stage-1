@@ -64,7 +64,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
     ${DBHelper.largeSourceUrlForRestaurant(restaurant)} 800w
   `;
   image.sizes = '(min-width: 750px) 40vw, 90vw';
-  image.alt = restaurant.photograph.alt;
+  image.alt = restaurant.name;
 
   const cuisine = document.getElementById('restaurant-cuisine');
   cuisine.innerHTML = restaurant.cuisine_type;

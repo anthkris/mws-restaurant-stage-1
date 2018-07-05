@@ -156,7 +156,7 @@ createRestaurantHTML = (restaurant) => {
     ${DBHelper.largeSourceUrlForRestaurant(restaurant)} 800w
   `;
   image.sizes = '(min-width: 800px) 40vw, (min-width: 1032px) 20vw, 60vw';
-  image.alt = restaurant.photograph.alt;
+  image.alt = restaurant.name;
   imageDiv.append(image);
 
   const name = document.createElement('h2');

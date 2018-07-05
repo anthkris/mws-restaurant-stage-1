@@ -8,8 +8,8 @@ class DBHelper {
    * Change this to restaurants.json file location on your server.
    */
   static get DATABASE_URL() {
-    const port = 8887; // Change this to your server port
-    return `http://127.0.0.1:${port}/data/restaurants.json`;
+    const port = 1337; // Change this to your server port
+    return `http://127.0.0.1:${port}/restaurants`;
   }
 
   /**
@@ -30,19 +30,16 @@ class DBHelper {
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
-    let xhr = new XMLHttpRequest();
-    xhr.open('GET', DBHelper.DATABASE_URL);
-    xhr.onload = () => {
-      if (xhr.status === 200) { // Got a success response from server!
-        const json = JSON.parse(xhr.responseText);
-        const restaurants = json.restaurants;
+    return fetch(DBHelper.DATABASE_URL)
+      .then((response) => {
+        return response.json();
+      })
+      .then((restaurants) => {
         callback(null, restaurants);
-      } else { // Oops!. Got an error from server.
-        const error = (`Request failed. Returned status of ${xhr.status}`);
-        callback(error, null);
-      }
-    };
-    xhr.send();
+      })
+      .catch((error) => {
+        callback(`Request failed. Returned status of ${error}`, null);
+      });
   }
 
   /**
@@ -163,20 +160,25 @@ class DBHelper {
   /**
    * Restaurant image URLs.
    */
-  static progressiveImageLoading(restaurant) {
-    return (`/images_responsive/${restaurant.photograph.progressive}`);
-  }
-
   static imageUrlForRestaurant(restaurant) {
-    return (`/images_responsive/${restaurant.photograph.small}`);
+    if(restaurant.photograph == undefined) {
+      return (`/images_responsive/10-300_small.jpg`);
+    }
+    return (`/images_responsive/${restaurant.photograph}-300_small.jpg`);
   }
 
   static largeSourceUrlForRestaurant(restaurant) {
-    return (`/images_responsive/${restaurant.photograph.large}`);
+    if(restaurant.photograph == undefined) {
+      return (`/images_responsive/10-800_large.jpg`);
+    }
+    return (`/images_responsive/${restaurant.photograph}-800_large.jpg`);
   }
 
   static mediumSourceUrlForRestaurant(restaurant) {
-    return (`/images_responsive/${restaurant.photograph.medium}`);
+    if(restaurant.photograph == undefined) {
+      return (`/images_responsive/10-600_medium.jpg`);
+    }
+    return (`/images_responsive/${restaurant.photograph}-600_medium.jpg`);
   }
 
   /**
