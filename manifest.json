@@ -1,0 +1,25 @@
+{
+  "short_name": "MWS Reviews",
+  "name": "MWS Restaurant Reviews",
+  "icons": [
+    {
+      "src": "/icons/reviews-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icons/reviews-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "icons/reviews.svg",
+      "sizes": "257x257"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#003459",
+  "display": "standalone",
+  "scope": "/mws-restaurant-stage-1/",
+  "theme_color": "#003459"
+}

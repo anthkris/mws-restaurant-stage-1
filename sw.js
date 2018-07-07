@@ -16,12 +16,6 @@ const dbPromise = idb.default.open('mws-restaurant-data', 1, (upgradeDB) => {
 
 /* From Google  */
 
-self.addEventListener('beforeinstallprompt', (e) => {
-  // Prevent Chrome 67 and earlier from automatically showing the prompt
- 
-});
-
-
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(STATICCACHENAME).then((cache) => {
