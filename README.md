@@ -31,3 +31,19 @@ To help make the site the best I could make it, I used the following resources:
 - Intrinsic Ratio for images: To minimize document reflow, I used the technique for defining intrinsic ratios for the images as described here: [Just Markup.com/](https://justmarkup.com/log/2015/11/definining-aspect-ratio-to-prevent-reflow/)
 - Skip Nav: I used the recommendations for an accessible skip navigation link from [WebAIM](https://webaim.org/techniques/css/invisiblecontent/#skipnavlink)
 - Informing screen reader users of a change in content: When a user filters the restaurants on the main page, a screen reader user would have no way of knowing that the content below had changed based on their filter choices. To fix this issue, I used a technique to announce changes to the user from [Simply Accessible.com](https://simplyaccessible.com/article/spangular-accessibility/#aria)
+
+## Project Overview: Stage 2
+
+In stage two of the project, I added indexedDB to the site to index data delivered from the project sails server.
+
+## Tools Used
+
+- Grunt to allow for the use of node modules in the js
+- ESLint to ensure adherence to the Udacity style guides
+- Noun Project for a site icon to use with the manifest file
+
+## Acknowledgements
+
+I had a bit of trouble with the indexedDB portion at first. I got over the hump partly with the help of the Udacity webinar by Doug Brown: [https://www.youtube.com/watch?v=Q2CJYf_XA58](https://www.youtube.com/watch?v=Q2CJYf_XA58)
+
+I also used the Google Web Fundamentals article about web manifests to help me build a proper manifest: [https://developers.google.com/web/fundamentals/web-app-manifest/](https://developers.google.com/web/fundamentals/web-app-manifest/)
