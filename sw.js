@@ -1,6 +1,6 @@
 import idb from 'idb';
 
-const STATICCACHENAME = 'mws-reviews-static-v2';
+const STATICCACHENAME = 'mws-reviews-static-v3';
 const CONTENTIMGSCACHE = 'mws-restaurant-imgs';
 const ALLCACHES = [
   STATICCACHENAME,
@@ -65,6 +65,8 @@ self.addEventListener('fetch', (event) => {
       return;
     }
   }
+
+  /* Based on the Doug Brown live webinar solution */
 
   if (requestUrl.port === '1337') {
     handleDataRequest(requestUrl, event);
