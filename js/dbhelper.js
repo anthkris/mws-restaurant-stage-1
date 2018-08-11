@@ -112,7 +112,7 @@ class DBHelper {
   }
 
   /**
-   * Fetch a review by the its ID.
+   * Fetch a review by its ID.
    */
   static fetchReviewById(id, callback) {
     // Fetch all reviews with proper error handling.
@@ -218,6 +218,48 @@ class DBHelper {
       }
     });
   }
+
+  /**
+   * Fetch favorited state of restaurants.
+   */
+  static fetchFavoriteState(callback, id) {
+    const isFavorite = `${DBHelper.DATABASE_URL}/restaurants/${id}/?is_favorite=true`;
+
+    return fetch(isFavorite)
+      .then((response) => {
+        return response.json();
+      })
+      .then((favorite) => {
+        return callback(null, favorite.is_favorite);
+      })
+      .catch((error) => {
+        callback(`Request failed. Returned status of ${error}`, null);
+      });
+  }
+
+  static putFavoriteState(id, isFavorite) {
+    const init = { method: 'PUT'};
+    let favoriteUrl;
+
+    if (isFavorite) {
+      favoriteUrl = `${DBHelper.DATABASE_URL}/restaurants/${id}/?is_favorite=true`;
+    } else {
+      favoriteUrl = `${DBHelper.DATABASE_URL}/restaurants/${id}/?is_favorite=false`;
+    }
+
+    return fetch(favoriteUrl, init)
+      .then((response) => {
+        return response.json();
+      })
+      .then((favorite) => {
+        console.log(favorite)
+        return favorite;
+      })
+      .catch((error) => {
+        console.log(`Request failed. Returned status of ${error}`, null);
+      });
+  }
+
 
   /**
    * Restaurant page URL.

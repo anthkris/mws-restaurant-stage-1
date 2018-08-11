@@ -189,27 +189,53 @@ createRestaurantHTML = (restaurant) => {
   buttonDiv.append(more);
 
   const favorite = document.createElement('button');
-  favorite.className = 'favorite-button unfavorited';
-  favorite.innerHTML = heartOutlineSVG;
+  favorite.className = `favorite-button ${getFavoriteState(restaurant.is_favorite)['className']}`;
+  favorite.innerHTML = getFavoriteState(restaurant.is_favorite)['icon'];
   buttonDiv.append(favorite);
 
-  favorite.addEventListener('click', toggleFavoriteRestaurant, false);
+  favorite.addEventListener('click', function(e) {
+    toggleFavoriteRestaurant(e, restaurant.id);
+  }, false);
 
   return li;
 };
 
-toggleFavoriteRestaurant = (event) => {
+getFavoriteState = (isFavorite) => {
+  switch(isFavorite == 'true') {
+    case true:
+      return {
+        'className': 'favorited',
+        'icon': heartFilledSVG
+      };
+      break;
+    case false:
+      return {
+        'className': 'unfavorited',
+        'icon': heartOutlineSVG
+      };
+      break;
+    default:
+      return {
+        'className': 'unfavorited',
+        'icon': heartOutlineSVG
+      };
+  }
+};
+
+toggleFavoriteRestaurant = (event, id) => {
   const favorite = event.currentTarget;
   if (favorite.classList.contains('unfavorited')) {
     console.log('restaurant favorited');
     favorite.innerHTML = heartFilledSVG;
     favorite.classList.remove('unfavorited');
     favorite.classList.add('favorited');
+    DBHelper.putFavoriteState(id, true);
   } else {
     console.log('restaurant unfavorited');
     favorite.innerHTML = heartOutlineSVG;
     favorite.classList.remove('favorited');
     favorite.classList.add('unfavorited');
+    DBHelper.putFavoriteState(id, false);
   }
 };
 
