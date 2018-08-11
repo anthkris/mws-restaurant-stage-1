@@ -340,19 +340,6 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
   font-size: 0.9em;
 }
 
-#restaurants-list li a {
-  background-color: #bb4d00;
-  border-bottom: 3px solid #eee;
-  color: #fff;
-  display: inline-block;
-  font-size: 0.8em;
-  margin: 15px 0 0;
-  padding: 8px 30px 10px;
-  text-align: center;
-  text-decoration: none;
-  text-transform: uppercase;
-}
-
 .columns {
   width: 100%;
 }
@@ -361,6 +348,35 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
   margin: 0 auto;
   max-width: 1200px;
   width: 100%;
+}
+
+.favorite-button {
+  background: transparent;
+  border: 0px;
+}
+
+.favorite-button svg {
+  width: 30px;
+}
+
+.restaurant-card-action-div {
+  align-items: center;
+  border-top: 2px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.restaurant-card-action-div a,
+.restaurant-card-action-div button {
+  color: #034078;
+  display: inline-block;
+  font-size: 1em;
+  margin: 15px 0 0;
+  padding: 8px 10px 0px 10px;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
 }
 
 @media screen and (min-width: 500px) and (max-width: 799px) {
