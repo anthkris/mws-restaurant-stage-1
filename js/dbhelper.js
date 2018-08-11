@@ -9,7 +9,7 @@ class DBHelper {
    */
   static get DATABASE_URL() {
     const port = 1337; // Change this to your server port
-    return `http://127.0.0.1:${port}/restaurants`;
+    return `http://127.0.0.1:${port}`;
   }
 
   /**
@@ -32,9 +32,9 @@ class DBHelper {
   static fetchRestaurants(callback, id) {
     let restaurantToFetch;
     if(id) {
-      restaurantToFetch = `${DBHelper.DATABASE_URL}/${id}`;
+      restaurantToFetch = `${DBHelper.DATABASE_URL}/restaurants/${id}`;
     } else {
-      restaurantToFetch = DBHelper.DATABASE_URL;
+      restaurantToFetch = `${DBHelper.DATABASE_URL}/restaurants`;
     }
 
     return fetch(restaurantToFetch)
@@ -43,6 +43,32 @@ class DBHelper {
       })
       .then((restaurants) => {
         callback(null, restaurants);
+      })
+      .catch((error) => {
+        callback(`Request failed. Returned status of ${error}`, null);
+      });
+  }
+
+
+  /**
+     * Fetch all reviews.
+   */
+  static fetchReviews(callback, restaurantId, id) {
+    let reviewToFetch;
+    if(restaurantId) {
+      reviewToFetch = `${DBHelper.DATABASE_URL}/reviews/?restaurant_id=${restaurantId}`;
+    } else if (id) {
+      reviewToFetch = `${DBHelper.DATABASE_URL}/reviews/${id}`;
+    } else {
+      reviewToFetch = `${DBHelper.DATABASE_URL}/reviews`;
+    }
+
+    return fetch(reviewToFetch)
+      .then((response) => {
+        return response.json();
+      })
+      .then((reviews) => {
+        callback(null, reviews);
       })
       .catch((error) => {
         callback(`Request failed. Returned status of ${error}`, null);
@@ -66,6 +92,43 @@ class DBHelper {
       }
     }, id);
   }
+
+  /**
+   * Fetch a review by the restaurant ID.
+   */
+  static fetchReviewsByRestaurantId(restaurantId, callback) {
+    // Fetch all reviews with proper error handling.
+    DBHelper.fetchReviews((error, reviews) => {
+      if (error) {
+        callback(error, null);
+      } else {
+        if (reviews) { // Got the reviews
+          callback(null, reviews);
+        } else { // Review does not exist in the database
+          callback('Reviews do not exist', null);
+        }
+      }
+    }, restaurantId, null);
+  }
+
+  /**
+   * Fetch a review by the its ID.
+   */
+  static fetchReviewById(id, callback) {
+    // Fetch all reviews with proper error handling.
+    DBHelper.fetchReviews((error, review) => {
+      if (error) {
+        callback(error, null);
+      } else {
+        if (review) { // Got the review
+          callback(null, review);
+        } else { // Review does not exist in the database
+          callback('Review does not exist', null);
+        }
+      }
+    }, null, id);
+  }
+
 
   /**
    * Fetch restaurants by a cuisine type with proper error handling.

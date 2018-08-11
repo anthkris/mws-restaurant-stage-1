@@ -1,5 +1,7 @@
 let restaurant;
+let reviews;
 let map;
+let restaurantId;
 
 /**
  * Initialize Google map, called from HTML.
@@ -28,12 +30,12 @@ fetchRestaurantFromURL = (callback) => {
     callback(null, self.restaurant);
     return;
   }
-  const id = getParameterByName('id');
-  if (!id) { // No id found in URL
+  restaurantId = getParameterByName('id');
+  if (!restaurantId) { // No id found in URL
     const error = 'No restaurant id in URL';
     callback(error, null);
   } else {
-    DBHelper.fetchRestaurantById(id, (error, restaurant) => {
+    DBHelper.fetchRestaurantById(restaurantId, (error, restaurant) => {
       self.restaurant = restaurant;
       if (!restaurant) {
         console.error(error);
@@ -73,8 +75,25 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();
   }
-  // Fill reviews
-  fillReviewsHTML();
+
+  if (self.reviews) { // Restaurant already fetched!
+    // Fill reviews
+    fillReviewsHTML(reviews);
+    return;
+  }
+
+  DBHelper.fetchReviewsByRestaurantId(restaurantId, (error, reviews) => {
+    self.reviews = reviews;
+    if (!reviews) {
+      console.error(error);
+      return;
+    }
+    // Fill reviews
+    fillReviewsHTML(reviews);
+  });
+
+  
+  
 };
 
 /**
@@ -100,7 +119,7 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
 /**
  * Create all reviews HTML and add them to the webpage.
  */
-fillReviewsHTML = (reviews = self.restaurant.reviews) => {
+fillReviewsHTML = (reviews) => {
   const container = document.getElementById('reviews-container');
   const title = document.createElement('h2');
   title.innerHTML = 'Reviews';
@@ -130,7 +149,7 @@ createReviewHTML = (review) => {
   li.appendChild(name);
 
   const date = document.createElement('span');
-  date.innerHTML = review.date;
+  date.innerHTML = convertToDate(review.createdAt);
   date.className = 'review-date';
   name.appendChild(date);
 
@@ -179,3 +198,54 @@ getParameterByName = (name, url) => {
   }
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 };
+
+/**
+ * Convert to date string.
+ * Based on https://stackoverflow.com/questions/11591854/format-date-to-mm-dd-yyyy-in-javascript
+ */
+convertToDate = (time)=> {
+  const date = new Date(time);
+  let wordMonth;
+
+  switch(date.getMonth()) {
+    case 0:
+      wordMonth = 'January';
+      break;
+    case 1:
+      wordMonth = 'February';
+      break;
+    case 2:
+      wordMonth = 'March';
+      break;
+    case 3:
+      wordMonth = 'April';
+      break;
+    case 4:
+      wordMonth = 'May';
+      break;
+    case 5:
+      wordMonth = 'June';
+      break;
+    case 6:
+      wordMonth = 'July';
+      break;
+    case 7:
+      wordMonth = 'August';
+      break;
+    case 8:
+      wordMonth = 'September';
+      break;
+    case 9:
+      wordMonth = 'October';
+      break;
+    case 10:
+      wordMonth = 'November';
+      break;
+    case 11:
+      wordMonth = 'December';
+      break;
+  }
+
+  const dateString = `${wordMonth} ${date.getDate()}, ${date.getFullYear()}`;
+  return dateString;
+}

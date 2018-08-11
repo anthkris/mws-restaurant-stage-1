@@ -7,10 +7,17 @@ const ALLCACHES = [
   CONTENTIMGSCACHE
 ];
 
-const dbPromise = idb.default.open('mws-restaurant-data', 1, (upgradeDB) => {
+const dbRestaurantsPromise = idb.default.open('mws-restaurant-data', 1, (upgradeDB) => {
   switch (upgradeDB.oldVersion) {
     case 0:
       upgradeDB.createObjectStore('restaurants', { keyPath: 'id' });
+  }
+});
+
+const dbReviewsPromise = idb.default.open('mws-review-data', 1, (upgradeDB) => {
+  switch (upgradeDB.oldVersion) {
+    case 0:
+      upgradeDB.createObjectStore('reviews', { keyPath: 'restaurant_id' });
   }
 });
 
@@ -25,7 +32,8 @@ self.addEventListener('install', (event) => {
         '/js/restaurantinfo.js',
         '/css/styles.css',
         'index.html',
-        'restaurant.html'
+        'restaurant.html',
+        'manifest.json'
       ]);
     })
   );
@@ -67,9 +75,11 @@ self.addEventListener('fetch', (event) => {
   }
 
   /* Based on the Doug Brown live webinar solution */
-
-  if (requestUrl.port === '1337') {
-    handleDataRequest(requestUrl, event);
+  if (requestUrl.port === '1337' && requestUrl.pathname.startsWith('/restaurants')) {
+    handleRestaurantDataRequest(requestUrl, event);
+  } else if (requestUrl.port === '1337' && requestUrl.pathname.startsWith('/reviews')) {
+    console.log(requestUrl);
+    handleReviewDataRequest(requestUrl, event);
   } else {
     event.respondWith(
       caches.match(event.request).then((response) => {
@@ -79,24 +89,59 @@ self.addEventListener('fetch', (event) => {
   }
 });
 
-const handleDataRequest = (requestUrl, event) => {
+const handleRestaurantDataRequest = (requestUrl, event) => {
   const params = requestUrl.pathname.split('/');
   const id = params[params.length - 1] === 'restaurants' ? '-1' : params[params.length - 1];
-  event.respondWith(dbPromise.then((db) => {
+  console.log(id);
+  event.respondWith(dbRestaurantsPromise.then((db) => {
     return db.transaction('restaurants', 'readonly').objectStore('restaurants').get(id);
   }).then((data) => {
     // If data is in indexeddb store, then use it
     // Else, fetch and store the data
     if (data && data.data) {
+      console.log(data);
       return data.data;
     } else {
       return fetch(event.request).then((response) => {
         return response.json();
       }).then((json) => {
-        return dbPromise.then((db) => {
+        return dbRestaurantsPromise.then((db) => {
           var tx = db.transaction('restaurants', 'readwrite');
           var store = tx.objectStore('restaurants').put({
             id: id,
+            data: json
+          });
+          return json;
+        });
+      });
+    }
+  }).then((finalResponse) => {
+    return new Response(JSON.stringify(finalResponse));
+  }).catch((error) => {
+    return new Response('Error fetching data', { status: error.status });
+  }));
+};
+
+const handleReviewDataRequest = (requestUrl, event) => {
+  const params = requestUrl.searchParams;
+  const id = params.get('restaurant_id');
+  console.log(id);
+  event.respondWith(dbReviewsPromise.then((db) => {
+    return db.transaction('reviews', 'readonly').objectStore('reviews').get(id);
+  }).then((data) => {
+    // If data is in indexeddb store, then use it
+    // Else, fetch and store the data
+    if (data && data.data) {
+      console.log(data);
+      return data.data;
+    } else {
+      return fetch(event.request).then((response) => {
+        return response.json();
+      }).then((json) => {
+        return dbReviewsPromise.then((db) => {
+          var tx = db.transaction('reviews', 'readwrite');
+          var store = tx.objectStore('reviews').put({
+            restaurant_id: id,
             data: json
           });
           return json;
