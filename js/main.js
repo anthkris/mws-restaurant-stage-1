@@ -1,6 +1,7 @@
 let restaurants,
   neighborhoods,
-  cuisines;
+  cuisines,
+  favoriteRestaurants;
 var map;
 var markers = [];
 const heartOutlineSVG = '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" fill="#034078" version="1.1" x="0px" y="0px" viewBox="0 0 100 100"><g transform="translate(0,-952.36218)"><path style="text-indent:0;text-transform:none;direction:ltr;block-progression:tb;baseline-shift:baseline;color:#000000;enable-background:accumulate;" d="m 35.310596,972.39274 c -4.737999,0 -9.493707,1.85967 -13.03125,5.59378 -7.075159,7.4679 -7.064843,19.372 0,26.84368 l 24.78125,26.25 a 4.0004,4.0004 0 0 0 5.8125,0 c 8.271592,-8.7311 16.57209,-17.4873 24.84375,-26.2187 7.07514,-7.46798 7.07502,-19.37558 0,-26.84378 -7.07504,-7.46821 -18.956127,-7.46836 -26.03125,0 l -1.6875,1.7813 -1.6875,-1.8125 c -3.537574,-3.7341 -8.262001,-5.59378 -13,-5.59378 z m 0,7.84378 c 2.571339,0 5.124214,1.1033 7.1875,3.2812 l 4.625,4.8438 a 4.0004,4.0004 0 0 0 5.78125,0 l 4.5625,-4.8438 c 4.126557,-4.3559 10.311,-4.3558 14.4375,0 4.12652,4.3559 4.1264,11.4883 0,15.8438 -7.304137,7.71008 -14.602064,15.44628 -21.90625,23.15618 l -21.90625,-23.15618 a 4.0004,4.0004 0 0 0 0,-0.031 c -4.125897,-4.3635 -4.126381,-11.4571 0,-15.8125 2.063247,-2.1779 4.647411,-3.2813 7.21875,-3.2813 z" fill="#034078" fill-opacity="1" stroke="none" marker="none" visibility="visible" display="inline" overflow="visible"/></g></svg>';
@@ -12,6 +13,7 @@ const heartFilledSVG = '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:c
 document.addEventListener('DOMContentLoaded', (event) => {
   fetchNeighborhoods();
   fetchCuisines();
+  fetchFavorites()
   DBHelper.registerServiceWorker();
 });
 
@@ -52,6 +54,20 @@ fetchCuisines = () => {
     } else {
       self.cuisines = cuisines;
       fillCuisinesHTML();
+    }
+  });
+};
+
+/**
+ * Fetch favorite restaurants.
+ */
+fetchFavorites = () => {
+  DBHelper.fetchFavoriteState((error, favorites) => {
+    if (error) { // Got an error
+      console.error(error);
+    } else {
+      self.favoriteRestaurants = favorites;
+      return favorites;
     }
   });
 };
@@ -188,42 +204,33 @@ createRestaurantHTML = (restaurant) => {
   more.href = DBHelper.urlForRestaurant(restaurant);
   buttonDiv.append(more);
 
-  const favorite = document.createElement('button');
-  favorite.className = `favorite-button ${getFavoriteState(restaurant.is_favorite)['className']}`;
-  favorite.innerHTML = getFavoriteState(restaurant.is_favorite)['icon'];
-  buttonDiv.append(favorite);
+  const favoriteButton = document.createElement('button');
+  favoriteButton.className = 'favorite-button ';
 
-  favorite.addEventListener('click', function(e) {
+  self.favoriteRestaurants.some((favorite) => {
+    if(favorite.id === restaurant.id) {
+      favoriteButton.className += 'favorited';
+      favoriteButton.innerHTML = heartFilledSVG;
+      return true;
+    } else {
+      favoriteButton.className += 'unfavorited';
+      favoriteButton.innerHTML = heartOutlineSVG;
+    }
+  });
+  
+  
+  buttonDiv.append(favoriteButton);
+
+  favoriteButton.addEventListener('click', function(e) {
     toggleFavoriteRestaurant(e, restaurant.id);
   }, false);
 
   return li;
 };
 
-getFavoriteState = (isFavorite) => {
-  switch(isFavorite == 'true') {
-    case true:
-      return {
-        'className': 'favorited',
-        'icon': heartFilledSVG
-      };
-      break;
-    case false:
-      return {
-        'className': 'unfavorited',
-        'icon': heartOutlineSVG
-      };
-      break;
-    default:
-      return {
-        'className': 'unfavorited',
-        'icon': heartOutlineSVG
-      };
-  }
-};
-
 toggleFavoriteRestaurant = (event, id) => {
   const favorite = event.currentTarget;
+  console.log(favorite);
   if (favorite.classList.contains('unfavorited')) {
     console.log('restaurant favorited');
     favorite.innerHTML = heartFilledSVG;

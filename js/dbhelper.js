@@ -222,21 +222,24 @@ class DBHelper {
   /**
    * Fetch favorited state of restaurants.
    */
-  static fetchFavoriteState(callback, id) {
-    const isFavorite = `${DBHelper.DATABASE_URL}/restaurants/${id}/?is_favorite=true`;
+  static fetchFavoriteState(callback) {
+    const favorites = `${DBHelper.DATABASE_URL}/restaurants/?is_favorite=true`;
 
-    return fetch(isFavorite)
+    return fetch(favorites)
       .then((response) => {
         return response.json();
       })
-      .then((favorite) => {
-        return callback(null, favorite.is_favorite);
+      .then((favoriteList) => {
+        callback(null, favoriteList);
       })
       .catch((error) => {
         callback(`Request failed. Returned status of ${error}`, null);
       });
   }
 
+  /**
+   * Update favorited state of restaurants.
+   */
   static putFavoriteState(id, isFavorite) {
     const init = { method: 'PUT'};
     let favoriteUrl;
@@ -252,7 +255,6 @@ class DBHelper {
         return response.json();
       })
       .then((favorite) => {
-        console.log(favorite)
         return favorite;
       })
       .catch((error) => {

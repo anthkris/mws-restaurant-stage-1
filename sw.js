@@ -91,7 +91,14 @@ self.addEventListener('fetch', (event) => {
 
 const handleRestaurantDataRequest = (requestUrl, event) => {
   const params = requestUrl.pathname.split('/');
-  const id = params[params.length - 1] === 'restaurants' ? '-1' : params[params.length - 1];
+  let id;
+  
+  if(params.length > 2) {
+    id = params[2];
+  } else {
+    id = '-1';
+  }
+
   console.log(id);
   event.respondWith(dbRestaurantsPromise.then((db) => {
     return db.transaction('restaurants', 'readonly').objectStore('restaurants').get(id);
