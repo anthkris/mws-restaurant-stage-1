@@ -40,6 +40,13 @@
         </div>
       </div>
       <div class="container">
+        <!-- TODO: Needs ARIA role and ARIA-live -->
+        <div id="offline-dialog" class="hidden">
+          You appear to be offline. Once your connection is restored, we'll sync your favorites.
+          <div class="offline-dialog-button-group">
+            <button id="dismiss-button" class="dismiss">GOT IT</button>
+          </div>
+        </div>
         <!-- Solution for informing SR users of change in context from https://simplyaccessible.com/article/spangular-accessibility/#aria -->
         <div role="status" class="accessibilty-label" aria-live="polite" aria-atomic="true">Showing <span id="restaurants-filtered"></span> of <span id="restaurants-total"></span></div>
         <ul id="restaurants-list"></ul>

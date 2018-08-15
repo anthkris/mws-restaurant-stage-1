@@ -11,15 +11,12 @@ const dbRestaurantsPromise = idb.default.open('mws-restaurant-data', 1, (upgrade
   switch (upgradeDB.oldVersion) {
     case 0:
       upgradeDB.createObjectStore('restaurants', { keyPath: 'id' });
+      upgradeDB.createObjectStore('reviews', { keyPath: 'restaurant_id' });
+      upgradeDB.createObjectStore('requests', { keyPath: 'id', autoIncrement:true });
   }
 });
 
-const dbReviewsPromise = idb.default.open('mws-review-data', 1, (upgradeDB) => {
-  switch (upgradeDB.oldVersion) {
-    case 0:
-      upgradeDB.createObjectStore('reviews', { keyPath: 'restaurant_id' });
-  }
-});
+
 
 /* From Google  */
 
@@ -56,6 +53,7 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const requestUrl = new URL(event.request.url);
+  const request =  event.request;
 
   if (requestUrl.pathname === '/') {
     event.respondWith(caches.match('/index.html'));
@@ -74,11 +72,19 @@ self.addEventListener('fetch', (event) => {
     }
   }
 
+  if(navigator.onLine) {
+    // TODO: Stop this from running multiple times
+    // If back online, send off awaiting POST and favorite(PUT) requests
+    sendAndDeleteRequests();
+  }
+
   /* Based on the Doug Brown live webinar solution */
-  if (requestUrl.port === '1337' && requestUrl.pathname.startsWith('/restaurants')) {
+  if (requestUrl.port === '1337' && request.method !== 'GET') {
+    console.log('Not a GET request');
+    handlePutAndPostRequest(requestUrl, event);
+  } else if (requestUrl.port === '1337' && requestUrl.pathname.startsWith('/restaurants')) {
     handleRestaurantDataRequest(requestUrl, event);
   } else if (requestUrl.port === '1337' && requestUrl.pathname.startsWith('/reviews')) {
-    console.log(requestUrl);
     handleReviewDataRequest(requestUrl, event);
   } else {
     event.respondWith(
@@ -91,22 +97,27 @@ self.addEventListener('fetch', (event) => {
 
 const handleRestaurantDataRequest = (requestUrl, event) => {
   const params = requestUrl.pathname.split('/');
+  const query = new URLSearchParams(requestUrl.search.slice(1));
   let id;
-  
+
+  // Stop right here if fetching favorites
+  // They should be fetched fresh
+  if(query.has('is_favorite')){
+    return;
+  }
+
   if(params.length > 2) {
     id = params[2];
   } else {
     id = '-1';
   }
 
-  console.log(id);
   event.respondWith(dbRestaurantsPromise.then((db) => {
     return db.transaction('restaurants', 'readonly').objectStore('restaurants').get(id);
   }).then((data) => {
     // If data is in indexeddb store, then use it
     // Else, fetch and store the data
     if (data && data.data) {
-      console.log(data);
       return data.data;
     } else {
       return fetch(event.request).then((response) => {
@@ -132,20 +143,18 @@ const handleRestaurantDataRequest = (requestUrl, event) => {
 const handleReviewDataRequest = (requestUrl, event) => {
   const params = requestUrl.searchParams;
   const id = params.get('restaurant_id');
-  console.log(id);
-  event.respondWith(dbReviewsPromise.then((db) => {
+  event.respondWith(dbRestaurantsPromise.then((db) => {
     return db.transaction('reviews', 'readonly').objectStore('reviews').get(id);
   }).then((data) => {
     // If data is in indexeddb store, then use it
     // Else, fetch and store the data
     if (data && data.data) {
-      console.log(data);
       return data.data;
     } else {
       return fetch(event.request).then((response) => {
         return response.json();
       }).then((json) => {
-        return dbReviewsPromise.then((db) => {
+        return dbRestaurantsPromise.then((db) => {
           var tx = db.transaction('reviews', 'readwrite');
           var store = tx.objectStore('reviews').put({
             restaurant_id: id,
@@ -160,6 +169,56 @@ const handleReviewDataRequest = (requestUrl, event) => {
   }).catch((error) => {
     return new Response('Error fetching data', { status: error.status });
   }));
+};
+
+const handlePutAndPostRequest = (requestUrl, event) => {
+  const method = event.request.method;
+  const url = '' + requestUrl;
+  if(!navigator.onLine) {
+    return dbRestaurantsPromise.then((db) => {
+        var tx = db.transaction('requests', 'readwrite');
+        var store = tx.objectStore('requests').put({
+          requestType: method,
+          data: url
+        });
+      });
+  }
+};
+
+const sendAndDeleteRequests = () => {
+  return dbRestaurantsPromise.then((db) => {
+        var tx = db.transaction('requests', 'readwrite');
+        var store = tx.objectStore('requests');
+
+        store.openCursor()
+          .then((cursor) => {
+            if (!cursor) {
+              return;
+            } else {
+              console.log(cursor.value);
+              const url = cursor.value.data;
+              const method = cursor.value.requestType;
+              cursor.delete();
+              if(method === 'PUT') {
+                return fetch(url, {method: method})
+                  .then((response) => {
+                    return response.json();
+                  })
+                  .then((favorite) => {
+                    console.log(favorite);
+                    return favorite;
+                  })
+                  .catch((error) => {
+                    console.log(`Request failed. Returned status of ${error}`, null);
+                  });
+              }
+              cursor.continue();
+            }
+          });
+          tx.complete.then(() => {
+            console.log('done');
+          });
+        });
 };
 
 const serveRestaurantPhoto = (request) => {
