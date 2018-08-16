@@ -221,8 +221,16 @@ Technique from https://justmarkup.com/log/2015/11/definining-aspect-ratio-to-pre
 
 /* ====================== Map ====================== */
 
-#map {
+#map,
+#map-message,
+#swap-map-button {
   display: none;
+}
+
+#map-container {
+  display: flex;
+  justify-content: center;
+  position: relative;
 }
 
 @media screen and (min-width: 650px) {
@@ -230,6 +238,29 @@ Technique from https://justmarkup.com/log/2015/11/definining-aspect-ratio-to-pre
     background-color: #ccc;
     display: block;
     height: 400px;
+    width: 100%;
+  }
+
+  #map-message {
+    background: #252831;
+    bottom: 1em;
+    color: #ffffff;
+    display: block;
+    left: 0px;
+    height: 50px;
+    padding: 1em;
+    position: absolute;
+  }
+
+  #static-map {
+    display: block;
+    height: 381px;
+    object-fit: cover;
+    width: 100%;
+  }
+
+  #swap-map-button {
+    display: inline;
     width: 100%;
   }
 }

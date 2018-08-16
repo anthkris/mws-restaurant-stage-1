@@ -6,26 +6,23 @@ var map;
 var markers = [];
 const heartOutlineSVG = '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" fill="#034078" version="1.1" x="0px" y="0px" viewBox="0 0 100 100"><g transform="translate(0,-952.36218)"><path style="text-indent:0;text-transform:none;direction:ltr;block-progression:tb;baseline-shift:baseline;color:#000000;enable-background:accumulate;" d="m 35.310596,972.39274 c -4.737999,0 -9.493707,1.85967 -13.03125,5.59378 -7.075159,7.4679 -7.064843,19.372 0,26.84368 l 24.78125,26.25 a 4.0004,4.0004 0 0 0 5.8125,0 c 8.271592,-8.7311 16.57209,-17.4873 24.84375,-26.2187 7.07514,-7.46798 7.07502,-19.37558 0,-26.84378 -7.07504,-7.46821 -18.956127,-7.46836 -26.03125,0 l -1.6875,1.7813 -1.6875,-1.8125 c -3.537574,-3.7341 -8.262001,-5.59378 -13,-5.59378 z m 0,7.84378 c 2.571339,0 5.124214,1.1033 7.1875,3.2812 l 4.625,4.8438 a 4.0004,4.0004 0 0 0 5.78125,0 l 4.5625,-4.8438 c 4.126557,-4.3559 10.311,-4.3558 14.4375,0 4.12652,4.3559 4.1264,11.4883 0,15.8438 -7.304137,7.71008 -14.602064,15.44628 -21.90625,23.15618 l -21.90625,-23.15618 a 4.0004,4.0004 0 0 0 0,-0.031 c -4.125897,-4.3635 -4.126381,-11.4571 0,-15.8125 2.063247,-2.1779 4.647411,-3.2813 7.21875,-3.2813 z" fill="#034078" fill-opacity="1" stroke="none" marker="none" visibility="visible" display="inline" overflow="visible"/></g></svg>';
 const heartFilledSVG = '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" fill="#034078" version="1.1" x="0px" y="0px" viewBox="0 0 100 100"><g transform="translate(0,-952.36218)"><path d="m 25.198553,980.79613 c -5.60077,5.9117 -5.59537,15.42487 0,21.34247 l 24.78604,26.2236 c 8.27161,-8.7311 16.54322,-17.462 24.81483,-26.1934 5.60077,-5.9117 5.60077,-15.43043 0,-21.34244 -5.60077,-5.91203 -14.61863,-5.91215 -20.21947,0 l -4.56663,4.82028 -4.59527,-4.85051 c -5.60086,-5.91196 -14.61871,-5.91196 -20.2195,0 z" style="color:#000000;enable-background:accumulate;" fill="#034078" stroke="none" marker="none" visibility="visible" display="inline" overflow="visible"/></g></svg>';
-const dismissButton = document.getElementById('dismiss-button');
 
 /**
  * Fetch neighborhoods and cuisines and register ServiceWorker as soon as the page is loaded.
  */
 document.addEventListener('DOMContentLoaded', (event) => {
+  const swapMapButton = document.getElementById('swap-map-button');
+
+  fetchFavorites();
   fetchNeighborhoods();
   fetchCuisines();
-  fetchFavorites()
+
+  swapMapButton.addEventListener('click', function(e) {
+    swapMap();
+  }, false);
+
   DBHelper.registerServiceWorker();
 });
-
-/**
- * Allow dismissButton to dismiss dialog.
- */
-dismissButton.addEventListener('click', function(e) {
-  console.log('button clicked');
-  const alert = document.getElementById('offline-dialog');
-  alert.classList.add('hidden');
-}, false);
 
 /**
  * Fetch all neighborhoods and set their HTML.
@@ -94,6 +91,8 @@ fillCuisinesHTML = (cuisines = self.cuisines) => {
     option.value = cuisine;
     select.append(option);
   });
+
+  updateRestaurants();
 };
 
 /**
@@ -109,7 +108,6 @@ window.initMap = () => {
     center: loc,
     scrollwheel: false
   });
-  updateRestaurants();
 };
 
 /**
@@ -162,7 +160,6 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
   restaurants.forEach(restaurant => {
     ul.append(createRestaurantHTML(restaurant));
   });
-  addMarkersToMap();
 };
 
 /**
@@ -216,6 +213,7 @@ createRestaurantHTML = (restaurant) => {
 
   const favoriteButton = document.createElement('button');
   favoriteButton.className = 'favorite-button ';
+  favoriteButton.setAttribute('role', 'button');
 
   const isFavorite = self.favoriteRestaurants.some((favorite) => {
     return favorite.id === restaurant.id;
@@ -223,9 +221,11 @@ createRestaurantHTML = (restaurant) => {
 
   if(isFavorite) {
     favoriteButton.className += 'favorited';
+    favoriteButton.setAttribute('aria-label', 'favorite this restaurant');
     favoriteButton.innerHTML = heartFilledSVG;
   } else {
     favoriteButton.className += 'unfavorited';
+    favoriteButton.setAttribute('aria-label', 'unfavorite this restaurant');
     favoriteButton.innerHTML = heartOutlineSVG;
   }
   
@@ -240,29 +240,55 @@ createRestaurantHTML = (restaurant) => {
 };
 
 toggleFavoriteRestaurant = (event, id) => {
-  const favorite = event.currentTarget;
-  const offlineDialog = document.getElementById('offline-dialog');
-  if (!navigator.onLine) {
-    offlineDialog.classList.remove('hidden');
-  }
-  if (favorite.classList.contains('unfavorited')) {
+  const favoriteButton = event.currentTarget;
+
+  if (favoriteButton.classList.contains('unfavorited')) {
     console.log('restaurant favorited');
-    favorite.innerHTML = heartFilledSVG;
-    favorite.classList.remove('unfavorited');
-    favorite.classList.add('favorited');
-    DBHelper.putFavoriteState(id, true);
+    favoriteButton.innerHTML = heartFilledSVG;
+    favoriteButton.classList.remove('unfavorited');
+    favoriteButton.classList.add('favorited');
+    updateFavoriteRestaurants(true, id);
+    favoriteButton.setAttribute('aria-label', 'unfavorite this restaurant');
+    DBHelper.putFavoriteState(id, true, favoriteButton, self.favoriteRestaurants);
   } else {
     console.log('restaurant unfavorited');
-    favorite.innerHTML = heartOutlineSVG;
-    favorite.classList.remove('favorited');
-    favorite.classList.add('unfavorited');
-    DBHelper.putFavoriteState(id, false);
+    favoriteButton.innerHTML = heartOutlineSVG;
+    favoriteButton.classList.remove('favorited');
+    favoriteButton.classList.add('unfavorited');
+    updateFavoriteRestaurants(false, id);
+    favoriteButton.setAttribute('aria-label', 'favorite this restaurant');
+    DBHelper.putFavoriteState(id, false, favoriteButton, self.favoriteRestaurants);
+  }
+};
+
+updateFavoriteRestaurants = (isFavorite, id) => {
+  if (isFavorite) {
+    const exists = self.favoriteRestaurants.find((fav) => {
+      if(fav.id === id) {
+        fav.is_favorite = 'true';
+        return fav.id === id;
+      }
+    });
+
+    if (!exists) {
+      self.favoriteRestaurants.push({
+        id: id,
+        is_favorite: 'true'
+      });
+    }
+  } else {
+    self.favoriteRestaurants.find((fav, index) => {
+      console.log(fav);
+      if(fav.id === id) {
+        return self.favoriteRestaurants.splice(index, 1)
+      }
+    });
   }
 };
 
 /**
  * Add markers for current restaurants to the map.
- */
+*/
 addMarkersToMap = (restaurants = self.restaurants) => {
   restaurants.forEach(restaurant => {
     // Add marker to the map
@@ -273,3 +299,22 @@ addMarkersToMap = (restaurants = self.restaurants) => {
     self.markers.push(marker);
   });
 };
+
+/**
+ * Swap out static map for interactive map.
+*/
+swapMap = () => {
+  const staticMap = document.getElementById('static-map');
+  const swapMapButton = document.getElementById('swap-map-button');
+  const mapMessage = document.getElementById('map-message');
+  const interactiveMap = document.getElementById('map');
+
+  initMap();
+  addMarkersToMap();
+
+  staticMap.classList.add('hidden');
+  swapMapButton.classList.add('hidden');
+  mapMessage.classList.add('hidden');
+  interactiveMap.classList.remove('hidden');
+};
+

@@ -23,7 +23,14 @@
 
   <main id="main-content">
     <section id="map-container">
-      <div id="map" role="application" aria-label="Google map with restaurant locations marked"></div>
+      <!-- Based on hybrid solution here: https://medium.com/@lorenzozaccagnini/improve-google-map-performance-in-your-pwa-fe24a6b3a37b -->
+      <button id="swap-map-button" aria-label="swap to interactive map">
+        <img id="static-map" alt="Static google map image of restaurant locations" src="https://maps.googleapis.com/maps/api/staticmap?zoom=11&size=640x381&format=jpg&scale=2&maptype=roadmap&markers=color:red%7C40.683555,-73.966393%7C40.747143,-73.985414%7C40.722216,-73.987501%7C40.705089,-73.933585%7C40.674925,-74.01616%7C40.727397,-73.983645%7C40.726584,-74.002082%7C40.743797,-73.950652%7C40.743394,-73.954235&key=AIzaSyDsAIccvKJoROAk6zDuhOWBlgWlNu8V5XA">
+      </button>
+      <div id="map" class="hidden" role="application" aria-label="Google map with restaurant locations marked"></div>
+      <div id="map-message">
+        Select the map to interact.
+      </div>
     </section>
     <section id="restaurants">
       <div class="filter-options">
@@ -40,11 +47,10 @@
         </div>
       </div>
       <div class="container">
-        <!-- TODO: Needs ARIA role and ARIA-live -->
-        <div id="offline-dialog" class="hidden">
-          You appear to be offline. Once your connection is restored, we'll sync your favorites.
+        <div id="offline-dialog" class="hidden" role="alertdialog" aria-live="assertive" tabindex="0">
+          <p id="offline-dialog-msg"></p>
           <div class="offline-dialog-button-group">
-            <button id="dismiss-button" class="dismiss">GOT IT</button>
+            <button id="dismiss-button" class="dismiss">DISMISS</button>
           </div>
         </div>
         <!-- Solution for informing SR users of change in context from https://simplyaccessible.com/article/spangular-accessibility/#aria -->
@@ -56,7 +62,7 @@
 
   <script type="application/javascript" charset="utf-8" src="js/dbhelper.js"></script>
   <script type="application/javascript" charset="utf-8" src="js/main.js"></script>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB0SJsoEFXZkApXGO2KBnGnSeng2Z-5aDo&libraries=places&callback=initMap"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB0SJsoEFXZkApXGO2KBnGnSeng2Z-5aDo&libraries=places"></script>
 
 
   <footer id="footer">

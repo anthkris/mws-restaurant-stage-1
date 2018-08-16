@@ -240,7 +240,7 @@ class DBHelper {
   /**
    * Update favorited state of restaurants.
    */
-  static putFavoriteState(id, isFavorite) {
+  static putFavoriteState(id, isFavorite, previousElement, allFavorites) {
     const init = { method: 'PUT'};
     let favoriteUrl;
 
@@ -250,6 +250,8 @@ class DBHelper {
       favoriteUrl = `${DBHelper.DATABASE_URL}/restaurants/${id}/?is_favorite=false`;
     }
 
+    navigator.serviceWorker.controller.postMessage(allFavorites);
+
     return fetch(favoriteUrl, init)
       .then((response) => {
         return response.json();
@@ -258,8 +260,26 @@ class DBHelper {
         return favorite;
       })
       .catch((error) => {
+        DBHelper.createOfflineDialog(previousElement, 'You appear to be offline. Once your connection is restored, we\'ll sync your favorites.');
         console.log(`Request failed. Returned status of ${error}`, null);
       });
+  }
+
+  static createOfflineDialog(previousElement, msg) {
+    const offlineDialog = document.getElementById('offline-dialog');
+    const offlineDialogMessage = document.getElementById('offline-dialog-msg');
+    const dismissButton = document.getElementById('dismiss-button');
+
+    offlineDialog.classList.remove('hidden');
+    offlineDialogMessage.innerHTML = msg;
+    offlineDialog.focus();
+    
+    // Dismiss button should dismiss dialog and return focus to previous element
+    dismissButton.addEventListener('click', function(e) {
+      const alert = document.getElementById('offline-dialog');
+      alert.classList.add('hidden');
+      previousElement.focus();
+    }, false);
   }
 
 
