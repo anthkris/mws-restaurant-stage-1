@@ -462,28 +462,6 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
 }
 
 /* ====================== Restaurant Details ====================== */
-.inside header {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 1000;
-}
-
-.inside #map-container {
-  background: blue none repeat scroll 0 0;
-  height: 50%;
-  position: relative;
-  width: 100%;
-}
-
-.inside #map {
-  background-color: #ccc;
-  display: block;
-  height: 100%;
-  min-height: 450px;
-  width: 100%;
-}
-
 #restaurant-name {
   color: #bb4d00;
   font-family: Arial,sans-serif;
@@ -529,12 +507,21 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
   width: 90%;
 }
 
-#reviews-container h2 {
+#reviews-container h2,
+#reviews-container h3 {
   color: #bb4d00;
-  font-size: 1.4em;
   font-weight: 300;
   letter-spacing: -1px;
+}
+
+#reviews-container h2 {
+  font-size: 1.4em;
   padding-bottom: 1px;
+}
+
+#reviews-container h3 {
+  font-size: 1.2em;
+  margin-bottom: 0px;
 }
 
 #reviews-list {
@@ -555,6 +542,52 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
 
 #restaurant-hours td {
   color: #666;
+}
+
+#review-form-container {
+  margin-bottom: 30px;
+}
+
+#review-form-container input,
+#review-form-container textarea {
+  border: 1px solid #d9d9d9;
+  border-radius: 5px;
+  display: block;
+  font-size: 1rem;
+  padding: .5em;
+  width: 97%;
+
+}
+
+#review-form-container #submit-review {
+  border: none;
+  border-radius: 0px;
+  background: #a34300;
+  color: #ffffff;
+  margin: 10px 0 0 auto;
+  width: 150px;
+}
+
+.inside header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.inside #map-container {
+  background: blue none repeat scroll 0 0;
+  height: 50%;
+  position: relative;
+  width: 100%;
+}
+
+.inside #map {
+  background-color: #ccc;
+  display: block;
+  height: 100%;
+  min-height: 450px;
+  width: 100%;
 }
 
 .restaurant-rating {

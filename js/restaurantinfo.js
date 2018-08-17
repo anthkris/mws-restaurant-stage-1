@@ -125,6 +125,65 @@ fillReviewsHTML = (reviews) => {
   title.innerHTML = 'Reviews';
   container.appendChild(title);
 
+  const subtitle = document.createElement('h3');
+  subtitle.innerHTML = 'Add a Review';
+  container.appendChild(subtitle);
+
+  const instructionText = document.createElement('small');
+  instructionText.innerHTML = 'Asterisk(*) indicates required field.';
+  container.appendChild(instructionText);
+
+  const reviewFormContainer = document.getElementById('review-form-container');
+  const reviewForm = document.createElement('form');
+  reviewForm.setAttribute('action', '');
+
+  const nameLabel = document.createElement('label');
+  nameLabel.setAttribute('for', 'name');
+  nameLabel.innerHTML = 'Name*';
+  reviewForm.appendChild(nameLabel);
+
+  const nameInput = document.createElement('input');
+  nameInput.setAttribute('id', 'name');
+  nameInput.setAttribute('maxLength', '200');
+  nameInput.setAttribute('name', 'name');
+  nameInput.setAttribute('type', 'text');
+  reviewForm.appendChild(nameInput);
+
+  const ratingLabel = document.createElement('label');
+  ratingLabel.setAttribute('for', 'rating');
+  ratingLabel.innerHTML = 'Rating*';
+  reviewForm.appendChild(ratingLabel);
+
+  const ratingInput = document.createElement('input');
+  ratingInput.setAttribute('id', 'rating');
+  ratingInput.setAttribute('min', '1');
+  ratingInput.setAttribute('max', '5');
+  ratingInput.setAttribute('name', 'rating');
+  ratingInput.setAttribute('type', 'number');
+  reviewForm.appendChild(ratingInput);
+
+  const reviewLabel = document.createElement('label');
+  reviewLabel.setAttribute('for', 'user-review');
+  reviewLabel.innerHTML = 'Review*';
+  reviewForm.appendChild(reviewLabel);
+
+  const reviewInput = document.createElement('textarea');
+  reviewInput.setAttribute('id', 'user-review');
+  reviewInput.setAttribute('rows', '4');
+  reviewInput.setAttribute('cols', '50');
+  reviewForm.appendChild(reviewInput);
+
+  const reviewSubmit = document.createElement('input');
+  reviewSubmit.setAttribute('id', 'submit-review');
+  reviewSubmit.setAttribute('value', 'Add Review');
+  reviewSubmit.setAttribute('type', 'submit');
+  reviewForm.appendChild(reviewSubmit);
+
+
+  reviewFormContainer.appendChild(reviewForm);
+  container.appendChild(reviewFormContainer);
+
+
   if (!reviews) {
     const noReviews = document.createElement('p');
     noReviews.innerHTML = 'No reviews yet!';
