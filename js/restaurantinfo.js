@@ -77,6 +77,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   }
 
   if (self.reviews) { // Restaurant already fetched!
+    createReviewForm();
     // Fill reviews
     fillReviewsHTML(reviews);
     return;
@@ -88,6 +89,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
       console.error(error);
       return;
     }
+    createReviewForm();
     // Fill reviews
     fillReviewsHTML(reviews);
   });
@@ -116,26 +118,19 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
   }
 };
 
-/**
- * Create all reviews HTML and add them to the webpage.
- */
-fillReviewsHTML = (reviews) => {
-  const container = document.getElementById('reviews-container');
-  const title = document.createElement('h2');
-  title.innerHTML = 'Reviews';
-  container.appendChild(title);
+createReviewForm = () => {
+  const container = document.getElementById('review-form-container');
 
-  const subtitle = document.createElement('h3');
-  subtitle.innerHTML = 'Add a Review';
-  container.appendChild(subtitle);
+  const addReviewTitle = document.createElement('h2');
+  addReviewTitle.innerHTML = 'Add a Review';
+  container.appendChild(addReviewTitle);
 
   const instructionText = document.createElement('small');
   instructionText.innerHTML = 'Asterisk(*) indicates required field.';
   container.appendChild(instructionText);
 
-  const reviewFormContainer = document.getElementById('review-form-container');
   const reviewForm = document.createElement('form');
-  reviewForm.setAttribute('action', '');
+  reviewForm.setAttribute('action', 'http://localhost:1337/reviews/');
 
   const nameLabel = document.createElement('label');
   nameLabel.setAttribute('for', 'name');
@@ -180,9 +175,18 @@ fillReviewsHTML = (reviews) => {
   reviewForm.appendChild(reviewSubmit);
 
 
-  reviewFormContainer.appendChild(reviewForm);
-  container.appendChild(reviewFormContainer);
+  container.appendChild(reviewForm);
 
+};
+
+/**
+ * Create all reviews HTML and add them to the webpage.
+ */
+fillReviewsHTML = (reviews) => {
+  const container = document.getElementById('reviews-container');
+  const title = document.createElement('h2');
+  title.innerHTML = 'Reviews';
+  container.appendChild(title);
 
   if (!reviews) {
     const noReviews = document.createElement('p');

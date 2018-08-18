@@ -500,23 +500,22 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
 }
 
 #restaurant-container,
-#reviews-container {
+#reviews-container,
+#review-form-container {
   border-bottom: 1px solid #d9d9d9;
   border-top: 1px solid #fff;
   margin: 0 auto;
+  padding-bottom: 30px;
   width: 90%;
 }
 
 #reviews-container h2,
-#reviews-container h3 {
+#review-form-container h2 {
   color: #bb4d00;
+  font-size: 1.4em;
   font-weight: 300;
   letter-spacing: -1px;
-}
-
-#reviews-container h2 {
-  font-size: 1.4em;
-  padding-bottom: 1px;
+  padding-top: 20px;
 }
 
 #reviews-container h3 {
@@ -542,10 +541,6 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
 
 #restaurant-hours td {
   color: #666;
-}
-
-#review-form-container {
-  margin-bottom: 30px;
 }
 
 #review-form-container input,
@@ -636,7 +631,8 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
   }
 
   #restaurant-container,
-  #reviews-container {
+  #reviews-container,
+  #review-form-container {
     display: flex;
     flex-direction: column;
     margin: 0;
@@ -655,6 +651,10 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
   #reviews-container {
     padding: 30px 40px 80px;
   }
+
+  #review-form-container {
+    padding: 30px 40px 40px;
+  }
 }
 
 @media screen and (min-width: 1950px) {
@@ -663,7 +663,8 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
   }
 
   #restaurant-container,
-  #reviews-container {
+  #reviews-container,
+  #review-form-container {
     width: calc(40% - 120px);
   }
 
@@ -671,7 +672,8 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
     padding: 140px 60px 30px;
   }
 
-  #reviews-container {
+  #reviews-container,
+  #review-form-container {
     padding: 30px 60px 80px;
   }
 }
