@@ -77,7 +77,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   }
 
   if (self.reviews) { // Restaurant already fetched!
-    createReviewForm();
+    createReviewForm(restaurant.id);
     // Fill reviews
     fillReviewsHTML(reviews);
     return;
@@ -89,7 +89,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
       console.error(error);
       return;
     }
-    createReviewForm();
+    createReviewForm(restaurant.id);
     // Fill reviews
     fillReviewsHTML(reviews);
   });
@@ -118,7 +118,7 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
   }
 };
 
-createReviewForm = () => {
+createReviewForm = (restaurant) => {
   const container = document.getElementById('review-form-container');
 
   const addReviewTitle = document.createElement('h2');
@@ -130,7 +130,16 @@ createReviewForm = () => {
   container.appendChild(instructionText);
 
   const reviewForm = document.createElement('form');
+  reviewForm.setAttribute('id', 'review-form');
   reviewForm.setAttribute('action', 'http://localhost:1337/reviews/');
+  reviewForm.setAttribute('method', 'POST');
+
+  const restaurantID = document.createElement('input');
+  restaurantID.setAttribute('type', 'hidden');
+  restaurantID.setAttribute('id', 'restaurant_id');
+  restaurantID.setAttribute('name', 'restaurant_id');
+  restaurantID.setAttribute('value', restaurant);
+  reviewForm.appendChild(restaurantID);
 
   const nameLabel = document.createElement('label');
   nameLabel.setAttribute('for', 'name');
@@ -142,6 +151,7 @@ createReviewForm = () => {
   nameInput.setAttribute('maxLength', '200');
   nameInput.setAttribute('name', 'name');
   nameInput.setAttribute('type', 'text');
+  nameInput.setAttribute('required', true);
   reviewForm.appendChild(nameInput);
 
   const ratingLabel = document.createElement('label');
@@ -155,6 +165,8 @@ createReviewForm = () => {
   ratingInput.setAttribute('max', '5');
   ratingInput.setAttribute('name', 'rating');
   ratingInput.setAttribute('type', 'number');
+  ratingInput.setAttribute('value', 3);
+  ratingInput.setAttribute('required', true);
   reviewForm.appendChild(ratingInput);
 
   const reviewLabel = document.createElement('label');
@@ -163,18 +175,21 @@ createReviewForm = () => {
   reviewForm.appendChild(reviewLabel);
 
   const reviewInput = document.createElement('textarea');
-  reviewInput.setAttribute('id', 'user-review');
+  reviewInput.setAttribute('id', 'comments');
+  reviewInput.setAttribute('name', 'comments');
   reviewInput.setAttribute('rows', '4');
   reviewInput.setAttribute('cols', '50');
+  reviewInput.setAttribute('required', true);
   reviewForm.appendChild(reviewInput);
 
   const reviewSubmit = document.createElement('input');
   reviewSubmit.setAttribute('id', 'submit-review');
   reviewSubmit.setAttribute('value', 'Add Review');
   reviewSubmit.setAttribute('type', 'submit');
+
+  reviewForm.addEventListener('submit', postRequest, false);
+
   reviewForm.appendChild(reviewSubmit);
-
-
   container.appendChild(reviewForm);
 
 };
@@ -206,6 +221,7 @@ fillReviewsHTML = (reviews) => {
  */
 createReviewHTML = (review) => {
   const li = document.createElement('li');
+  li.setAttribute('id', `review-${review.id}`);
   const name = document.createElement('p');
   name.className = 'reviewer-name';
   name.innerHTML = review.name;
@@ -229,6 +245,17 @@ createReviewHTML = (review) => {
   comments.innerHTML = review.comments;
   comments.className = 'review-comments';
   reviewBox.appendChild(comments);
+
+  const deleteButton = document.createElement('button');
+  deleteButton.setAttribute('id', 'delete-review');
+  deleteButton.innerHTML = 'Delete';
+  deleteButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    deleteReview(review.id);
+    return false;
+  }, false);
+
+  reviewBox.appendChild(deleteButton);
 
   return li;
 };
@@ -312,3 +339,130 @@ convertToDate = (time)=> {
   const dateString = `${wordMonth} ${date.getDate()}, ${date.getFullYear()}`;
   return dateString;
 }
+
+/**
+ * Reset form.
+ * Based on https://stackoverflow.com/questions/6028576/how-to-clear-a-form#6029442
+ */
+
+resetForm = (form) => {
+  const inputs = form.getElementsByTagName('input');
+  const textareas = form.getElementsByTagName('textarea');
+
+  for (let i = 0; i < inputs.length; i++) {
+    switch(inputs[i].type) {
+      case 'text':
+        inputs[i].value = '';
+        break;
+      case 'number':
+        inputs[i].value = null;
+        break;
+      case 'submit':
+        break;
+      case 'hidden':
+        break;
+      default:
+        inputs[i].value = '';
+    }
+  }
+
+  for (let j = 0; j < textareas.length; j++) {
+    console.log(textareas[j]);
+    textareas[j].value = '';
+  }
+};
+
+/**
+ * Create success alert on successful delete or post
+ *
+ */
+
+createSuccessAlert = (msg, success) => {
+  // TODO: Add in container parameter b/c delete message should show in reviews but add message should show in Add Reviews
+  const container = document.getElementById('reviews-container');
+  console.log(msg);
+  // TODO: Only create one if one is not already existing
+  const successAlert = document.createElement('div');
+  if(success) {
+    successAlert.style.background = '#d4edda';
+  } else {
+    successAlert.style.background = '#f8d7da';
+  }
+  successAlert.setAttribute('id', 'success-alert');
+  successAlert.setAttribute('role', 'alertdialog');
+  successAlert.setAttribute('aria-live', 'assertive');
+  successAlert.setAttribute('tabIndex', 0);
+
+  const successAlertMessage = document.createElement('p');
+  successAlertMessage.innerHTML = msg;
+  successAlert.appendChild(successAlertMessage);
+
+  const successAlertButtonGroup = document.createElement('div');
+  successAlertButtonGroup.setAttribute('class', 'success-alert-dialog-button');
+  successAlert.appendChild(successAlertButtonGroup);
+
+  const successAlertDimiss = document.createElement('button');
+  successAlertDimiss.setAttribute('id', 'success-alert-dismiss');
+  successAlertDimiss.innerHTML = 'DISMISS';
+  successAlertDimiss.addEventListener('click', (event) => {
+    successAlert.parentNode.removeChild(successAlert);
+  });
+  successAlertButtonGroup.appendChild(successAlertDimiss);
+
+  container.insertBefore(successAlert, container.firstChild);
+  successAlert.focus();
+};
+
+/**
+ * POST request.
+ *
+ */
+postRequest = (event) => {
+  const form = document.getElementById('review-form');
+  const formData = new FormData(form);
+  const ul = document.getElementById('reviews-list');
+
+  event.preventDefault();
+
+  DBHelper.postReviews(formData, (error, review) => {
+    createSuccessAlert('Your review has been added successfully', true);
+    // ul.appendChild(createReviewHTML(review));
+    resetForm(form);
+  });
+
+  // fetch('http://localhost:1337/reviews/', {
+  //   method: 'POST',
+  //   headers: {
+  //     'content-type': 'application/json'
+  //   },
+  //   body: JSON.stringify(formData)
+  // }).then((response) => {
+  //   console.log(response);
+  //   return response.json();
+  // }).then((review) => {
+  //   console.log(review);
+  //   createSuccessAlert('Your review has been added successfully', true);
+  //   // ul.appendChild(createReviewHTML(review));
+  //   resetForm(form);
+  // });
+
+  return false;
+};
+
+/**
+ * Delete review
+ *
+ */
+deleteReview = (review) => {
+  const deleteURL = `http://localhost:1337/reviews/${review}`;
+  const reviewLi = document.getElementById(`review-${review}`);
+  return fetch(deleteURL, {
+      method: 'DELETE',
+    }).then((response) => {
+      createSuccessAlert('Your review has been deleted successfully.', true);
+      reviewLi.parentNode.removeChild(reviewLi);
+      return response.json();
+    }).catch((error) => {
+      createSuccessAlert('Something went wrong. Please try again.', false);
+    });
+};

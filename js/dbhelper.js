@@ -238,6 +238,33 @@ class DBHelper {
   }
 
   /**
+   * Post reviews.
+   */
+
+   static postReviews(formData, callback) {
+    const reviewUrl = `${DBHelper.DATABASE_URL}/reviews/`;
+
+    return fetch(reviewUrl, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    })
+      .then((response) => {
+        console.log(response);
+        return response.json();
+      })
+      .then((review) => {
+        console.log(review);
+        callback(null, review);
+      })
+      .catch((error) => {
+        callback(`Request failed. Returned status of ${error}`, null);
+      });
+   }
+
+  /**
    * Update favorited state of restaurants.
    */
   static putFavoriteState(id, isFavorite, previousElement, allFavorites) {

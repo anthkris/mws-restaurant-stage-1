@@ -195,7 +195,12 @@ const handlePutAndPostRequest = (requestUrl, event) => {
   const method = event.request.method;
   const url = '' + requestUrl;
   const params = requestUrl.pathname.split('/');
+  const query = new URLSearchParams(requestUrl.search.slice(1));
   let id;
+
+  console.log(method);
+  console.log(requestUrl);
+  console.log(event.request);
 
   if(params.length > 2) {
     id = params[2];
@@ -203,7 +208,12 @@ const handlePutAndPostRequest = (requestUrl, event) => {
     id = '-1';
   }
 
-  if(!navigator.onLine) {
+  if(method === 'POST') {
+    // event.preventDefault();
+    console.log(event.request);
+  }
+
+  if(!navigator.onLine && method === 'PUT' && query.has('is_favorite')) {
     return dbRestaurantsPromise.then((db) => {
       var requestTx = db.transaction('requests', 'readwrite');
       var requestStore = requestTx.objectStore('requests').put({

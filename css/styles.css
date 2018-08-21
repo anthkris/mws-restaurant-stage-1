@@ -462,6 +462,16 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
 }
 
 /* ====================== Restaurant Details ====================== */
+#delete-review {
+  background: transparent;
+  border: 0;
+  float: right;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 20px 0;
+}
+
 #restaurant-name {
   color: #bb4d00;
   font-family: Arial,sans-serif;
@@ -678,12 +688,16 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
   }
 }
 
-/* ====================== Offline Dialog ====================== */
-#dismiss-button {
+/* ====================== Dialogs/Alerts ====================== */
+#dismiss-button,
+#success-alert-dismiss {
   background: transparent;
   border: 0;
   font-size: 1.1em;
   font-weight: bold;
+}
+
+#dismiss-button {
   margin-right: 30px;
 }
 
@@ -701,11 +715,19 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
   width: 96%;
 }
 
-#offline-dialog .offline-dialog-button-group {
+#offline-dialog .offline-dialog-button-group,
+#success-alert .success-alert-dialog-button {
   align-content: flex-end;
   display: flex;
   justify-content: flex-end;
   margin-top: auto;
+}
+
+#success-alert {
+  border-radius: 10px;
+  margin-bottom: 20px;
+  min-height: 50px;
+  padding: 20px;
 }
 
 @media screen and (min-width: 650px) {
