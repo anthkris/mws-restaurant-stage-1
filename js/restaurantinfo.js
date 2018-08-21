@@ -131,7 +131,7 @@ createReviewForm = (restaurant) => {
 
   const reviewForm = document.createElement('form');
   reviewForm.setAttribute('id', 'review-form');
-  reviewForm.setAttribute('action', 'http://localhost:1337/reviews/');
+  // reviewForm.setAttribute('action', 'http://localhost:1337/reviews/');
   reviewForm.setAttribute('method', 'POST');
 
   const restaurantID = document.createElement('input');
@@ -165,7 +165,6 @@ createReviewForm = (restaurant) => {
   ratingInput.setAttribute('max', '5');
   ratingInput.setAttribute('name', 'rating');
   ratingInput.setAttribute('type', 'number');
-  ratingInput.setAttribute('value', 3);
   ratingInput.setAttribute('required', true);
   reviewForm.appendChild(ratingInput);
 
@@ -187,7 +186,9 @@ createReviewForm = (restaurant) => {
   reviewSubmit.setAttribute('value', 'Add Review');
   reviewSubmit.setAttribute('type', 'submit');
 
-  reviewForm.addEventListener('submit', postRequest, false);
+  reviewForm.addEventListener('submit', (event) => {
+    postRequest(event, reviewForm);
+  }, false);
 
   reviewForm.appendChild(reviewSubmit);
   container.appendChild(reviewForm);
@@ -344,7 +345,6 @@ convertToDate = (time)=> {
  * Reset form.
  * Based on https://stackoverflow.com/questions/6028576/how-to-clear-a-form#6029442
  */
-
 resetForm = (form) => {
   const inputs = form.getElementsByTagName('input');
   const textareas = form.getElementsByTagName('textarea');
@@ -367,16 +367,13 @@ resetForm = (form) => {
   }
 
   for (let j = 0; j < textareas.length; j++) {
-    console.log(textareas[j]);
     textareas[j].value = '';
   }
 };
 
 /**
  * Create success alert on successful delete or post
- *
  */
-
 createSuccessAlert = (msg, success) => {
   // TODO: Add in container parameter b/c delete message should show in reviews but add message should show in Add Reviews
   const container = document.getElementById('reviews-container');
@@ -415,10 +412,8 @@ createSuccessAlert = (msg, success) => {
 
 /**
  * POST request.
- *
  */
-postRequest = (event) => {
-  const form = document.getElementById('review-form');
+postRequest = (event, form) => {
   const formData = new FormData(form);
   const ul = document.getElementById('reviews-list');
 
@@ -426,36 +421,19 @@ postRequest = (event) => {
 
   DBHelper.postReviews(formData, (error, review) => {
     createSuccessAlert('Your review has been added successfully', true);
-    // ul.appendChild(createReviewHTML(review));
+    ul.appendChild(createReviewHTML(review));
     resetForm(form);
   });
-
-  // fetch('http://localhost:1337/reviews/', {
-  //   method: 'POST',
-  //   headers: {
-  //     'content-type': 'application/json'
-  //   },
-  //   body: JSON.stringify(formData)
-  // }).then((response) => {
-  //   console.log(response);
-  //   return response.json();
-  // }).then((review) => {
-  //   console.log(review);
-  //   createSuccessAlert('Your review has been added successfully', true);
-  //   // ul.appendChild(createReviewHTML(review));
-  //   resetForm(form);
-  // });
-
-  return false;
+  
 };
 
 /**
  * Delete review
- *
  */
 deleteReview = (review) => {
   const deleteURL = `http://localhost:1337/reviews/${review}`;
   const reviewLi = document.getElementById(`review-${review}`);
+  // TODO: Should move fetch request to DBHelper
   return fetch(deleteURL, {
       method: 'DELETE',
     }).then((response) => {

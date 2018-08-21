@@ -213,6 +213,22 @@ const handlePutAndPostRequest = (requestUrl, event) => {
     console.log(event.request);
   }
 
+  // If offline, save delete requests to requests store
+
+  if(!navigator.onLine && method === 'DELETE') {
+    return dbRestaurantsPromise.then((db) => {
+      var requestTx = db.transaction('requests', 'readwrite');
+      var requestStore = requestTx.objectStore('requests').put({
+        requestType: method,
+        data: url
+      });
+    });
+  }
+
+  //TODO: Save POST requests to requests store
+
+  // If offline, save favorite requests to requests store
+  
   if(!navigator.onLine && method === 'PUT' && query.has('is_favorite')) {
     return dbRestaurantsPromise.then((db) => {
       var requestTx = db.transaction('requests', 'readwrite');
