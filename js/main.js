@@ -278,7 +278,6 @@ updateFavoriteRestaurants = (isFavorite, id) => {
     }
   } else {
     self.favoriteRestaurants.find((fav, index) => {
-      console.log(fav);
       if(fav.id === id) {
         return self.favoriteRestaurants.splice(index, 1)
       }

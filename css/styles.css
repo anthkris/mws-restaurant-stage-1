@@ -577,7 +577,7 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: 1000;
+  z-index: 500;
 }
 
 .inside #map-container {
@@ -690,7 +690,7 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
 
 /* ====================== Dialogs/Alerts ====================== */
 #dismiss-button,
-#success-alert-dismiss {
+.success-alert-dismiss {
   background: transparent;
   border: 0;
   font-size: 1.1em;
@@ -711,19 +711,19 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
   min-height: 100px;
   padding: 15px;
   position: fixed;
-  z-index: 200;
+  z-index: 1000;
   width: 96%;
 }
 
 #offline-dialog .offline-dialog-button-group,
-#success-alert .success-alert-dialog-button {
+.success-alert .success-alert-dialog-button {
   align-content: flex-end;
   display: flex;
   justify-content: flex-end;
   margin-top: auto;
 }
 
-#success-alert {
+.success-alert {
   border-radius: 10px;
   margin-bottom: 20px;
   min-height: 50px;

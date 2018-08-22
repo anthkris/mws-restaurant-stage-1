@@ -240,12 +240,16 @@ class DBHelper {
   /**
    * Post reviews.
    */
-
    static postReviews(formData, callback) {
     const reviewUrl = `${DBHelper.DATABASE_URL}/reviews/`;
-    // for (var [key, value] of formData.entries()) { 
-    //   console.log(key, value);
-    // }
+    let formObject = {};
+
+    for (var [key, value] of formData.entries()) { 
+      // console.log(key, value);
+      formObject[key] = value;
+    }
+    // Send form data to service worker
+    navigator.serviceWorker.controller.postMessage(formObject);
 
     return fetch(reviewUrl, {
       method: 'POST',
@@ -258,6 +262,28 @@ class DBHelper {
         callback(null, review);
       })
       .catch((error) => {
+        DBHelper.createOfflineDialog(null, 'You appear to be offline. Once your connection is restored, we\'ll sync your reviews.');
+        callback(`Request failed. Returned status of ${error}`, null);
+      });
+   }
+
+   /**
+   * Delete reviews.
+   */
+   static deleteReview(review, callback) {
+    const reviewUrl = `${DBHelper.DATABASE_URL}/reviews/${review}`;
+
+    return fetch(reviewUrl, {
+      method: 'DELETE'
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((review) => {
+        callback(null, review);
+      })
+      .catch((error) => {
+        DBHelper.createOfflineDialog(null, 'You appear to be offline. Once your connection is restored, we\'ll sync your reviews.');
         callback(`Request failed. Returned status of ${error}`, null);
       });
    }
@@ -274,7 +300,7 @@ class DBHelper {
     } else {
       favoriteUrl = `${DBHelper.DATABASE_URL}/restaurants/${id}/?is_favorite=false`;
     }
-
+    // Send favorites to service worker
     navigator.serviceWorker.controller.postMessage(allFavorites);
 
     return fetch(favoriteUrl, init)
@@ -303,7 +329,9 @@ class DBHelper {
     dismissButton.addEventListener('click', function(e) {
       const alert = document.getElementById('offline-dialog');
       alert.classList.add('hidden');
-      previousElement.focus();
+      if(previousElement) {
+        previousElement.focus();
+      }
     }, false);
   }
 

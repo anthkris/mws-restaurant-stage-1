@@ -36,6 +36,13 @@
 
   <!-- Beginning main -->
   <main id="main-content">
+    <!-- Offline dialog -->
+    <div id="offline-dialog" class="hidden" role="alertdialog" aria-live="assertive" tabindex="0">
+      <p id="offline-dialog-msg"></p>
+      <div class="offline-dialog-button-group">
+        <button id="dismiss-button" class="dismiss">DISMISS</button>
+      </div>
+    </div>
     <!-- Beginning map -->
     <section id="map-container">
       <div id="map" role="application" aria-label="Google map with restaurant location marked"></div>

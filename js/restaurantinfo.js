@@ -374,44 +374,56 @@ resetForm = (form) => {
 /**
  * Create success alert on successful delete or post
  */
-createSuccessAlert = (msg, success) => {
-  // TODO: Add in container parameter b/c delete message should show in reviews but add message should show in Add Reviews
-  const container = document.getElementById('reviews-container');
+createSuccessAlert = (msg, success, id, position) => {
+  const reviewContainer = document.getElementById('reviews-container');
+  const addReviewContainer = document.getElementById('review-form-container');
   console.log(msg);
   // TODO: Only create one if one is not already existing
-  const successAlert = document.createElement('div');
-  if(success) {
-    successAlert.style.background = '#d4edda';
-  } else {
-    successAlert.style.background = '#f8d7da';
+  if(document.getElementById(id) === null) {
+    const successAlert = document.createElement('div');
+    if(success) {
+      successAlert.style.background = '#d4edda';
+    } else {
+      successAlert.style.background = '#f8d7da';
+    }
+    successAlert.setAttribute('id', id);
+    successAlert.setAttribute('class', 'success-alert');
+    successAlert.setAttribute('role', 'alertdialog');
+    successAlert.setAttribute('aria-live', 'assertive');
+    successAlert.setAttribute('tabIndex', 0);
+
+    const successAlertMessage = document.createElement('p');
+    successAlertMessage.innerHTML = msg;
+    successAlert.appendChild(successAlertMessage);
+
+    const successAlertButtonGroup = document.createElement('div');
+    successAlertButtonGroup.setAttribute('class', 'success-alert-dialog-button');
+    successAlert.appendChild(successAlertButtonGroup);
+
+    const successAlertDimiss = document.createElement('button');
+    successAlertDimiss.setAttribute('class', 'success-alert-dismiss');
+    successAlertDimiss.innerHTML = 'DISMISS';
+    successAlertDimiss.addEventListener('click', (event) => {
+      successAlert.parentNode.removeChild(successAlert);
+    });
+    successAlertButtonGroup.appendChild(successAlertDimiss);
+
+    switch(position) {
+      case 'add':
+        addReviewContainer.insertBefore(successAlert, addReviewContainer.firstChild);
+        break;
+      case 'delete':
+        reviewContainer.insertBefore(successAlert, reviewContainer.firstChild);
+        break;
+    }
+    
+    successAlert.focus();
   }
-  successAlert.setAttribute('id', 'success-alert');
-  successAlert.setAttribute('role', 'alertdialog');
-  successAlert.setAttribute('aria-live', 'assertive');
-  successAlert.setAttribute('tabIndex', 0);
-
-  const successAlertMessage = document.createElement('p');
-  successAlertMessage.innerHTML = msg;
-  successAlert.appendChild(successAlertMessage);
-
-  const successAlertButtonGroup = document.createElement('div');
-  successAlertButtonGroup.setAttribute('class', 'success-alert-dialog-button');
-  successAlert.appendChild(successAlertButtonGroup);
-
-  const successAlertDimiss = document.createElement('button');
-  successAlertDimiss.setAttribute('id', 'success-alert-dismiss');
-  successAlertDimiss.innerHTML = 'DISMISS';
-  successAlertDimiss.addEventListener('click', (event) => {
-    successAlert.parentNode.removeChild(successAlert);
-  });
-  successAlertButtonGroup.appendChild(successAlertDimiss);
-
-  container.insertBefore(successAlert, container.firstChild);
-  successAlert.focus();
+  
 };
 
 /**
- * POST request.
+ * POST review.
  */
 postRequest = (event, form) => {
   const formData = new FormData(form);
@@ -420,27 +432,53 @@ postRequest = (event, form) => {
   event.preventDefault();
 
   DBHelper.postReviews(formData, (error, review) => {
-    createSuccessAlert('Your review has been added successfully', true);
-    ul.appendChild(createReviewHTML(review));
-    resetForm(form);
+    if (!error) {
+      updateReviews('add', null, review);
+      createSuccessAlert('Your review has been added successfully',true,'success-post-alert','add');
+      ul.appendChild(createReviewHTML(review));
+      resetForm(form);
+      navigator.serviceWorker.controller.postMessage(form);
+    }
   });
   
 };
 
 /**
- * Delete review
+ * Delete review.
  */
-deleteReview = (review) => {
-  const deleteURL = `http://localhost:1337/reviews/${review}`;
-  const reviewLi = document.getElementById(`review-${review}`);
-  // TODO: Should move fetch request to DBHelper
-  return fetch(deleteURL, {
-      method: 'DELETE',
-    }).then((response) => {
-      createSuccessAlert('Your review has been deleted successfully.', true);
+deleteReview = (reviewId) => {
+  const reviewLi = document.getElementById(`review-${reviewId}`);
+
+  DBHelper.deleteReview(reviewId, (error, review) => {
+    if(!error) {
+      updateReviews('delete', reviewId);
+      createSuccessAlert('Your review has been deleted successfully.',true,'success-delete-alert','delete');
       reviewLi.parentNode.removeChild(reviewLi);
-      return response.json();
-    }).catch((error) => {
-      createSuccessAlert('Something went wrong. Please try again.', false);
-    });
+    }
+  });
+};
+
+updateReviews = (action, id, data = {}) => {
+  switch(action) {
+    case 'add':
+      self.reviews.push({
+        id: data.id,
+        restaurant_id: data.restaurant_id,
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt,
+        name: data.name,
+        rating: data.rating,
+        comments: data.comments
+      });
+      break;
+    case 'delete':
+      self.reviews.find((review, index) => {
+        if(review.id === id) {
+          return self.reviews.splice(index, 1);
+        }
+      });
+      break;
+    case 'update':
+      break;
+  }
 };

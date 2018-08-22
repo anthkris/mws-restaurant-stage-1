@@ -17,7 +17,8 @@ const dbRestaurantsPromise = idb.default.open('mws-restaurant-data', 1, (upgrade
   }
 });
 
-let currentFavorites;
+let currentFavorites,
+    reviewData;
 
 /* From Google  */
 
@@ -53,7 +54,13 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('message', function(event){
-  currentFavorites = event.data;
+  console.log(event.data);
+  if(Array.isArray(event.data)) {
+    currentFavorites = event.data;
+  } else {
+    reviewData = event.data;
+  }
+  
 });
 
 self.addEventListener('fetch', (event) => {
@@ -108,6 +115,7 @@ const handleRestaurantDataRequest = (requestUrl, event) => {
       event.respondWith(dbRestaurantsPromise.then((db) => {
         return db.transaction('favorites', 'readonly').objectStore('favorites').get(id);
       }).then((data) => {
+          // Always attempt to fetch updated favorites
           return fetch(event.request).then((response) => {
             return response.json();
           }).then((json) => {
@@ -163,32 +171,59 @@ const handleRestaurantDataRequest = (requestUrl, event) => {
 const handleReviewDataRequest = (requestUrl, event) => {
   const params = requestUrl.searchParams;
   const id = params.get('restaurant_id');
+
+  // Always attempt to fetch updated reviews
   event.respondWith(dbRestaurantsPromise.then((db) => {
-    return db.transaction('reviews', 'readonly').objectStore('reviews').get(id);
-  }).then((data) => {
-    // If data is in indexeddb store, then use it
-    // Else, fetch and store the data
-    if (data && data.data) {
-      return data.data;
-    } else {
-      return fetch(event.request).then((response) => {
-        return response.json();
-      }).then((json) => {
-        return dbRestaurantsPromise.then((db) => {
-          var tx = db.transaction('reviews', 'readwrite');
-          var store = tx.objectStore('reviews').put({
-            restaurant_id: id,
-            data: json
+        return db.transaction('reviews', 'readonly').objectStore('reviews').get(id);
+      }).then((data) => {
+          return fetch(event.request).then((response) => {
+            return response.json();
+          }).then((json) => {
+            // If back online, send off awaiting POST and PUT requests
+            sendAndDeleteRequests();
+            return dbRestaurantsPromise.then((db) => {
+              var tx = db.transaction('reviews', 'readwrite');
+              var store = tx.objectStore('reviews').put({
+                restaurant_id: id,
+                data: json
+              });
+              return json;
+            });
+          }).catch((error) => {
+            return data.data;
           });
-          return json;
-        });
-      });
-    }
-  }).then((finalResponse) => {
-    return new Response(JSON.stringify(finalResponse));
-  }).catch((error) => {
-    return new Response('Error fetching data', { status: error.status });
-  }));
+      }).then((finalResponse) => {
+      return new Response(JSON.stringify(finalResponse));
+    }).catch((error) => {
+      return new Response('Error fetching data', { status: error.status });
+    }));
+
+  // event.respondWith(dbRestaurantsPromise.then((db) => {
+  //   return db.transaction('reviews', 'readonly').objectStore('reviews').get(id);
+  // }).then((data) => {
+  //   // If data is in indexeddb store, then use it
+  //   // Else, fetch and store the data
+  //   if (data && data.data) {
+  //     return data.data;
+  //   } else {
+  //     return fetch(event.request).then((response) => {
+  //       return response.json();
+  //     }).then((json) => {
+  //       return dbRestaurantsPromise.then((db) => {
+  //         var tx = db.transaction('reviews', 'readwrite');
+  //         var store = tx.objectStore('reviews').put({
+  //           restaurant_id: id,
+  //           data: json
+  //         });
+  //         return json;
+  //       });
+  //     });
+  //   }
+  // }).then((finalResponse) => {
+  //   return new Response(JSON.stringify(finalResponse));
+  // }).catch((error) => {
+  //   return new Response('Error fetching data', { status: error.status });
+  // }));
 };
 
 const handlePutAndPostRequest = (requestUrl, event) => {
@@ -208,9 +243,18 @@ const handlePutAndPostRequest = (requestUrl, event) => {
     id = '-1';
   }
 
-  if(method === 'POST') {
-    // event.preventDefault();
+  //If offline, save POST requests to requests store
+
+  if(!navigator.onLine && method === 'POST') {
     console.log(event.request);
+    return dbRestaurantsPromise.then((db) => {
+      var requestTx = db.transaction('requests', 'readwrite');
+      var requestStore = requestTx.objectStore('requests').put({
+        requestType: method,
+        data: url,
+        body: reviewData
+      });
+    });
   }
 
   // If offline, save delete requests to requests store
@@ -225,10 +269,8 @@ const handlePutAndPostRequest = (requestUrl, event) => {
     });
   }
 
-  //TODO: Save POST requests to requests store
-
   // If offline, save favorite requests to requests store
-  
+
   if(!navigator.onLine && method === 'PUT' && query.has('is_favorite')) {
     return dbRestaurantsPromise.then((db) => {
       var requestTx = db.transaction('requests', 'readwrite');
@@ -259,9 +301,25 @@ const sendAndDeleteRequests = () => {
         } else {
           const url = cursor.value.data;
           const method = cursor.value.requestType;
+          const body = cursor.value.body;
           cursor.delete();
-          if(method === 'PUT') {
+          if(method === 'PUT' || method === 'DELETE') {
             return fetch(url, {method: method})
+              .then((response) => {
+                return response.json();
+              })
+              .then((favorite) => {
+                return favorite;
+              })
+              .catch((error) => {
+                console.log(`Request failed. Returned status of ${error}`, null);
+              });
+          }
+          if(method === 'POST') {
+            return fetch(url, {
+                method: method,
+                body: body
+              })
               .then((response) => {
                 return response.json();
               })
