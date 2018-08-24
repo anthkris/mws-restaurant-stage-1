@@ -243,7 +243,6 @@ toggleFavoriteRestaurant = (event, id) => {
   const favoriteButton = event.currentTarget;
 
   if (favoriteButton.classList.contains('unfavorited')) {
-    console.log('restaurant favorited');
     favoriteButton.innerHTML = heartFilledSVG;
     favoriteButton.classList.remove('unfavorited');
     favoriteButton.classList.add('favorited');
@@ -251,7 +250,6 @@ toggleFavoriteRestaurant = (event, id) => {
     favoriteButton.setAttribute('aria-label', 'unfavorite this restaurant');
     DBHelper.putFavoriteState(id, true, favoriteButton, self.favoriteRestaurants);
   } else {
-    console.log('restaurant unfavorited');
     favoriteButton.innerHTML = heartOutlineSVG;
     favoriteButton.classList.remove('favorited');
     favoriteButton.classList.add('unfavorited');

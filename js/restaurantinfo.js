@@ -76,12 +76,12 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
     fillRestaurantHoursHTML();
   }
 
-  if (self.reviews) { // Restaurant already fetched!
-    createReviewForm(restaurant.id);
-    // Fill reviews
-    fillReviewsHTML(reviews);
-    return;
-  }
+  // if (self.reviews) { // Restaurant already fetched!
+  //   createReviewForm(restaurant.id);
+  //   // Fill reviews
+  //   fillReviewsHTML(reviews);
+  //   return;
+  // }
 
   DBHelper.fetchReviewsByRestaurantId(restaurantId, (error, reviews) => {
     self.reviews = reviews;
@@ -89,6 +89,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
       console.error(error);
       return;
     }
+    console.log(self.reviews);
     createReviewForm(restaurant.id);
     // Fill reviews
     fillReviewsHTML(reviews);
@@ -222,7 +223,10 @@ fillReviewsHTML = (reviews) => {
  */
 createReviewHTML = (review) => {
   const li = document.createElement('li');
-  li.setAttribute('id', `review-${review.id}`);
+  if(review.id) {
+    li.setAttribute('id', `review-${review.id}`);
+  }
+  
   const name = document.createElement('p');
   name.className = 'reviewer-name';
   name.innerHTML = review.name;
@@ -247,16 +251,24 @@ createReviewHTML = (review) => {
   comments.className = 'review-comments';
   reviewBox.appendChild(comments);
 
-  const deleteButton = document.createElement('button');
-  deleteButton.setAttribute('id', 'delete-review');
-  deleteButton.innerHTML = 'Delete';
-  deleteButton.addEventListener('click', (event) => {
-    event.preventDefault();
-    deleteReview(review.id);
-    return false;
-  }, false);
+  // Only add delete button if review was posted while online and has an id
+  if(review.id) {
+    const deleteButton = document.createElement('button');
+    deleteButton.setAttribute('id', 'delete-review');
+    deleteButton.innerHTML = 'Delete';
+    deleteButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      if(review.id) {
+        deleteReview(review.id);
+      } else {
+        deleteReview(review.createdAt);
+      }
+      
+      return false;
+    }, false);
 
-  reviewBox.appendChild(deleteButton);
+    reviewBox.appendChild(deleteButton);
+  }
 
   return li;
 };
@@ -377,8 +389,8 @@ resetForm = (form) => {
 createSuccessAlert = (msg, success, id, position) => {
   const reviewContainer = document.getElementById('reviews-container');
   const addReviewContainer = document.getElementById('review-form-container');
-  console.log(msg);
-  // TODO: Only create one if one is not already existing
+
+  // Only create an alert if one is not already existing
   if(document.getElementById(id) === null) {
     const successAlert = document.createElement('div');
     if(success) {
@@ -428,17 +440,39 @@ createSuccessAlert = (msg, success, id, position) => {
 postRequest = (event, form) => {
   const formData = new FormData(form);
   const ul = document.getElementById('reviews-list');
+  const now = Date.now();
+  let formObject = {};
 
   event.preventDefault();
 
-  DBHelper.postReviews(formData, (error, review) => {
-    if (!error) {
-      updateReviews('add', null, review);
-      createSuccessAlert('Your review has been added successfully',true,'success-post-alert','add');
-      ul.appendChild(createReviewHTML(review));
+  // Create form object for offline use
+  for (var [key, value] of formData.entries()) { 
+    formObject[key] = value;
+  }
+
+  // Can still update and show new reviews, if offline
+  const reviewObject = {
+        restaurant_id: formObject.restaurant_id,
+        createdAt: now,
+        updatedAt: now,
+        name: formObject.name,
+        rating: formObject.rating,
+        comments: formObject.comments
+      };
+  updateReviews('add', null, reviewObject);
+
+  DBHelper.postReviews(formData, self.reviews, (error, review) => {
+    if(error) {
+      // Can still update and show new reviews, if offline
+      ul.appendChild(createReviewHTML(reviewObject));
       resetForm(form);
-      navigator.serviceWorker.controller.postMessage(form);
+      return;
     }
+
+    // updateReviews('add', null, review);
+    createSuccessAlert('Your review has been added successfully',true,'success-post-alert','add');
+    ul.appendChild(createReviewHTML(review));
+    resetForm(form);
   });
   
 };
@@ -449,12 +483,17 @@ postRequest = (event, form) => {
 deleteReview = (reviewId) => {
   const reviewLi = document.getElementById(`review-${reviewId}`);
 
-  DBHelper.deleteReview(reviewId, (error, review) => {
-    if(!error) {
-      updateReviews('delete', reviewId);
-      createSuccessAlert('Your review has been deleted successfully.',true,'success-delete-alert','delete');
+  // Can still delete and update UI, if offline
+  updateReviews('delete', reviewId);
+
+  DBHelper.deleteReview(reviewId, self.reviews, (error, review) => {
+    if(error) {
       reviewLi.parentNode.removeChild(reviewLi);
+      return;
     }
+    // If online, then show success alert
+    createSuccessAlert('Your review has been deleted successfully.',true,'success-delete-alert','delete');
+    reviewLi.parentNode.removeChild(reviewLi);
   });
 };
 
@@ -462,7 +501,6 @@ updateReviews = (action, id, data = {}) => {
   switch(action) {
     case 'add':
       self.reviews.push({
-        id: data.id,
         restaurant_id: data.restaurant_id,
         createdAt: data.createdAt,
         updatedAt: data.updatedAt,
@@ -470,6 +508,7 @@ updateReviews = (action, id, data = {}) => {
         rating: data.rating,
         comments: data.comments
       });
+      console.log(self.reviews);
       break;
     case 'delete':
       self.reviews.find((review, index) => {
@@ -478,7 +517,7 @@ updateReviews = (action, id, data = {}) => {
         }
       });
       break;
-    case 'update':
+    case'update':
       break;
   }
 };

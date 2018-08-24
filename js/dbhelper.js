@@ -240,16 +240,17 @@ class DBHelper {
   /**
    * Post reviews.
    */
-   static postReviews(formData, callback) {
+   static postReviews(formData, allReviews, callback) {
     const reviewUrl = `${DBHelper.DATABASE_URL}/reviews/`;
     let formObject = {};
+    console.log(allReviews);
 
     for (var [key, value] of formData.entries()) { 
       // console.log(key, value);
       formObject[key] = value;
     }
     // Send form data to service worker
-    navigator.serviceWorker.controller.postMessage(formObject);
+    navigator.serviceWorker.controller.postMessage([allReviews, JSON.stringify(formObject)]);
 
     return fetch(reviewUrl, {
       method: 'POST',
@@ -270,8 +271,11 @@ class DBHelper {
    /**
    * Delete reviews.
    */
-   static deleteReview(review, callback) {
+   static deleteReview(review, allReviews, callback) {
     const reviewUrl = `${DBHelper.DATABASE_URL}/reviews/${review}`;
+
+    // Send form data to service worker
+    navigator.serviceWorker.controller.postMessage([allReviews, null]);
 
     return fetch(reviewUrl, {
       method: 'DELETE'
