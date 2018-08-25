@@ -243,12 +243,12 @@ class DBHelper {
    static postReviews(formData, allReviews, callback) {
     const reviewUrl = `${DBHelper.DATABASE_URL}/reviews/`;
     let formObject = {};
-    console.log(allReviews);
 
+    // Make clonable object out of formData
     for (var [key, value] of formData.entries()) { 
-      // console.log(key, value);
       formObject[key] = value;
     }
+
     // Send form data to service worker
     navigator.serviceWorker.controller.postMessage([allReviews, JSON.stringify(formObject)]);
 
@@ -260,10 +260,12 @@ class DBHelper {
         return response.json();
       })
       .then((review) => {
+        if(!navigator.onLine) {
+          DBHelper.createOfflineDialog(null, 'You appear to be offline. Once your connection is restored, we\'ll sync your reviews.');
+        }
         callback(null, review);
       })
       .catch((error) => {
-        DBHelper.createOfflineDialog(null, 'You appear to be offline. Once your connection is restored, we\'ll sync your reviews.');
         callback(`Request failed. Returned status of ${error}`, null);
       });
    }
@@ -274,7 +276,7 @@ class DBHelper {
    static deleteReview(review, allReviews, callback) {
     const reviewUrl = `${DBHelper.DATABASE_URL}/reviews/${review}`;
 
-    // Send form data to service worker
+    // Send reviews to service worker
     navigator.serviceWorker.controller.postMessage([allReviews, null]);
 
     return fetch(reviewUrl, {
@@ -284,10 +286,12 @@ class DBHelper {
         return response.json();
       })
       .then((review) => {
+        if(!navigator.onLine) {
+          DBHelper.createOfflineDialog(null, 'You appear to be offline. Once your connection is restored, we\'ll sync your reviews.');
+        }
         callback(null, review);
       })
       .catch((error) => {
-        DBHelper.createOfflineDialog(null, 'You appear to be offline. Once your connection is restored, we\'ll sync your reviews.');
         callback(`Request failed. Returned status of ${error}`, null);
       });
    }
@@ -312,10 +316,12 @@ class DBHelper {
         return response.json();
       })
       .then((favorite) => {
+        if(!navigator.onLine) {
+          DBHelper.createOfflineDialog(previousElement, 'You appear to be offline. Once your connection is restored, we\'ll sync your favorites.');
+        }
         return favorite;
       })
       .catch((error) => {
-        DBHelper.createOfflineDialog(previousElement, 'You appear to be offline. Once your connection is restored, we\'ll sync your favorites.');
         console.log(`Request failed. Returned status of ${error}`, null);
       });
   }
@@ -338,7 +344,6 @@ class DBHelper {
       }
     }, false);
   }
-
 
   /**
    * Restaurant page URL.

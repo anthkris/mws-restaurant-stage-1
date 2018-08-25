@@ -96,7 +96,7 @@ fillCuisinesHTML = (cuisines = self.cuisines) => {
 };
 
 /**
- * Initialize Google map, called from HTML.
+ * Initialize Google map.
  */
 window.initMap = () => {
   let loc = {
@@ -154,12 +154,20 @@ resetRestaurants = (restaurants) => {
 
 /**
  * Create all restaurants HTML and add them to the webpage.
+ * Update static map image in case more restaurants are added to db.
  */
 fillRestaurantsHTML = (restaurants = self.restaurants) => {
   const ul = document.getElementById('restaurants-list');
+  const staticMap = document.getElementById('static-map');
+  let staticMapSrc = 'https://maps.googleapis.com/maps/api/staticmap?zoom=11&size=640x381&format=jpg&scale=2&maptype=roadmap&markers=color:red%7C';
+
   restaurants.forEach(restaurant => {
+    const latlng = `${restaurant.latlng.lat},${restaurant.latlng.lng}%7C`;
+    staticMapSrc += latlng;
     ul.append(createRestaurantHTML(restaurant));
   });
+  staticMapSrc += '&key=AIzaSyDsAIccvKJoROAk6zDuhOWBlgWlNu8V5XA';
+  staticMap.setAttribute('src', staticMapSrc);
 };
 
 /**

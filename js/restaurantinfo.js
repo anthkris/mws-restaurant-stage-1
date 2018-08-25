@@ -75,21 +75,13 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();
   }
-
-  // if (self.reviews) { // Restaurant already fetched!
-  //   createReviewForm(restaurant.id);
-  //   // Fill reviews
-  //   fillReviewsHTML(reviews);
-  //   return;
-  // }
-
+  
   DBHelper.fetchReviewsByRestaurantId(restaurantId, (error, reviews) => {
     self.reviews = reviews;
     if (!reviews) {
       console.error(error);
       return;
     }
-    console.log(self.reviews);
     createReviewForm(restaurant.id);
     // Fill reviews
     fillReviewsHTML(reviews);
@@ -508,7 +500,6 @@ updateReviews = (action, id, data = {}) => {
         rating: data.rating,
         comments: data.comments
       });
-      console.log(self.reviews);
       break;
     case 'delete':
       self.reviews.find((review, index) => {
@@ -517,7 +508,7 @@ updateReviews = (action, id, data = {}) => {
         }
       });
       break;
-    case'update':
+    case 'update':
       break;
   }
 };

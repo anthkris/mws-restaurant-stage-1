@@ -233,6 +233,10 @@ Technique from https://justmarkup.com/log/2015/11/definining-aspect-ratio-to-pre
   position: relative;
 }
 
+.individual-restaurant-map {
+  order: 2;
+}
+
 @media screen and (min-width: 650px) {
   #map {
     background-color: #ccc;
@@ -247,7 +251,6 @@ Technique from https://justmarkup.com/log/2015/11/definining-aspect-ratio-to-pre
     color: #ffffff;
     display: block;
     left: 0px;
-    height: 50px;
     padding: 1em;
     position: absolute;
   }
@@ -472,6 +475,18 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
   padding: 20px 0;
 }
 
+#restaurant-container {
+  margin: 150px auto 0px;
+}
+
+#restaurant-container,
+#reviews-container,
+#review-form-container {
+  border-bottom: 1px solid #d9d9d9;
+  padding-bottom: 30px;
+  width: 90%;
+}
+
 #restaurant-name {
   color: #bb4d00;
   font-family: Arial,sans-serif;
@@ -509,14 +524,9 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
   width: 100%;
 }
 
-#restaurant-container,
 #reviews-container,
 #review-form-container {
-  border-bottom: 1px solid #d9d9d9;
-  border-top: 1px solid #fff;
   margin: 0 auto;
-  padding-bottom: 30px;
-  width: 90%;
 }
 
 #reviews-container h2,
@@ -643,6 +653,7 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
   #restaurant-container,
   #reviews-container,
   #review-form-container {
+    border-top: 1px solid #fff;
     display: flex;
     flex-direction: column;
     margin: 0;

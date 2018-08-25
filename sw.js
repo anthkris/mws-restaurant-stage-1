@@ -54,19 +54,14 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-self.addEventListener('message', function(event){
-  // Update favorites or review
+self.addEventListener('message', (event) => {
+  // Update favorites or review for storage in idb object store
   if(event.data[0].hasOwnProperty('is_favorite')) {
     currentFavorites = event.data;
-    console.log(currentFavorites);
   } else {
     reviewData = event.data[0];
     reviewToPost = event.data[1];
-
-    console.log(reviewData);
-    console.log(reviewToPost);
   }
-  
 });
 
 self.addEventListener('fetch', (event) => {
@@ -117,7 +112,7 @@ const handleRestaurantDataRequest = (requestUrl, event) => {
     id = '-1';
   }
 
-  if(query.has('is_favorite')){
+  if(query.has('is_favorite')) {
       event.respondWith(dbRestaurantsPromise.then((db) => {
         return db.transaction('favorites', 'readonly').objectStore('favorites').get(id);
       }).then((data) => {
@@ -128,16 +123,16 @@ const handleRestaurantDataRequest = (requestUrl, event) => {
             // If back online, send off awaiting POST and favorite(PUT) requests
             sendAndDeleteRequests();
             return dbRestaurantsPromise.then((db) => {
-              var tx = db.transaction('favorites', 'readwrite');
-              var store = tx.objectStore('favorites').put({
-                id: id,
-                data: json
+                var tx = db.transaction('favorites', 'readwrite');
+                var store = tx.objectStore('favorites').put({
+                  id: id,
+                  data: json
+                });
+                return json;
               });
-              return json;
+            }).catch((error) => {
+              return data.data;
             });
-          }).catch((error) => {
-            return data.data;
-          });
       }).then((finalResponse) => {
       return new Response(JSON.stringify(finalResponse));
     }).catch((error) => {
@@ -213,10 +208,8 @@ const handlePutAndPostRequest = (requestUrl, event) => {
   let restaurantId;
   let id;
 
-  console.log(reviewData);
   if(reviewData !== undefined) {
     restaurantId = reviewData[0]['restaurant_id'].toString();
-    console.log(restaurantId);
   }
 
   if(params.length > 2) {
@@ -248,7 +241,7 @@ const handlePutAndPostRequest = (requestUrl, event) => {
     });
   }
 
-  // If offline, save delete requests to requests store
+  // If offline, save DELETE requests to requests store
   // And update reviews store
 
   if(!navigator.onLine && method === 'DELETE') {
@@ -269,7 +262,7 @@ const handlePutAndPostRequest = (requestUrl, event) => {
     });
   }
 
-  // If offline, save favorite requests to requests store
+  // If offline, save favorite PUT requests to requests store
   // And update favorites store
 
   if(!navigator.onLine && method === 'PUT' && query.has('is_favorite')) {
@@ -295,43 +288,40 @@ const sendAndDeleteRequests = () => {
     var tx = db.transaction('requests', 'readwrite');
     var store = tx.objectStore('requests');
 
-    store.openCursor()
-      .then((cursor) => {
-        if (!cursor) {
-          return;
-        } else {
-          const url = cursor.value.data;
-          const method = cursor.value.requestType;
-          const body = cursor.value.body;
-          let options = {};
+    store.iterateCursor(cursor => {
+      if (!cursor) {
+        return;
+      }
+      const url = cursor.value.data;
+      const method = cursor.value.requestType;
+      const body = cursor.value.body;
+      let options = {};
+      console.log('send and delete requests', cursor.value);
 
-          cursor.delete();
-          if(method === 'PUT' || method === 'DELETE') {
-            options = {method: method};
-          } else if (method === 'POST') {
-            options = {
-              method: method,
-              body: body
-            };
-          }
+      cursor.delete();
+      if(method === 'PUT' || method === 'DELETE') {
+        options = {method: method};
+      } else if (method === 'POST') {
+        options = {
+          method: method,
+          body: body
+        };
+      }
+      cursor.continue();
 
-          fetch(url, options)
-            .then((response) => {
-              return response.json();
-            })
-            .then((item) => {
-              return item;
-            })
-            .catch((error) => {
-              console.log(`Request failed. Returned status of ${error}`, null);
-            });
-          cursor.continue();
-        }
-      });
-      tx.complete.then(() => {
-        console.log('done');
-      });
+      return fetch(url, options)
+        .then((response) => {
+          return response.json();
+        })
+        .then((item) => {
+          return item;
+        })
+        .catch((error) => {
+          console.log(`Request failed. Returned status of ${error}`, null);
+        });
     });
+    return tx.complete;
+  });
 };
 
 const serveRestaurantPhoto = (request) => {
