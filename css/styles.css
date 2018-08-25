@@ -569,9 +569,8 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
   border-radius: 5px;
   display: block;
   font-size: 1rem;
-  padding: .5em;
+  padding: 0.5em;
   width: 97%;
-
 }
 
 #review-form-container #submit-review {
@@ -713,7 +712,7 @@ Taken from: https://webaim.org/techniques/css/invisiblecontent/#techniques */
 }
 
 #offline-dialog {
-  background: #E8C547;
+  background: #e8c547;
   bottom: 0px;
   display: flex;
   flex-direction: column;

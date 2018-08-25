@@ -227,7 +227,7 @@ createRestaurantHTML = (restaurant) => {
     return favorite.id === restaurant.id;
   });
 
-  if(isFavorite) {
+  if (isFavorite) {
     favoriteButton.className += 'favorited';
     favoriteButton.setAttribute('aria-label', 'favorite this restaurant');
     favoriteButton.innerHTML = heartFilledSVG;
@@ -270,7 +270,7 @@ toggleFavoriteRestaurant = (event, id) => {
 updateFavoriteRestaurants = (isFavorite, id) => {
   if (isFavorite) {
     const exists = self.favoriteRestaurants.find((fav) => {
-      if(fav.id === id) {
+      if (fav.id === id) {
         fav.is_favorite = 'true';
         return fav.id === id;
       }
@@ -284,8 +284,8 @@ updateFavoriteRestaurants = (isFavorite, id) => {
     }
   } else {
     self.favoriteRestaurants.find((fav, index) => {
-      if(fav.id === id) {
-        return self.favoriteRestaurants.splice(index, 1)
+      if (fav.id === id) {
+        return self.favoriteRestaurants.splice(index, 1);
       }
     });
   }

@@ -75,7 +75,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();
   }
-  
+
   DBHelper.fetchReviewsByRestaurantId(restaurantId, (error, reviews) => {
     self.reviews = reviews;
     if (!reviews) {
@@ -124,7 +124,6 @@ createReviewForm = (restaurant) => {
 
   const reviewForm = document.createElement('form');
   reviewForm.setAttribute('id', 'review-form');
-  // reviewForm.setAttribute('action', 'http://localhost:1337/reviews/');
   reviewForm.setAttribute('method', 'POST');
 
   const restaurantID = document.createElement('input');
@@ -215,7 +214,7 @@ fillReviewsHTML = (reviews) => {
  */
 createReviewHTML = (review) => {
   const li = document.createElement('li');
-  if(review.id) {
+  if (review.id) {
     li.setAttribute('id', `review-${review.id}`);
   }
   
@@ -244,13 +243,13 @@ createReviewHTML = (review) => {
   reviewBox.appendChild(comments);
 
   // Only add delete button if review was posted while online and has an id
-  if(review.id) {
+  if (review.id) {
     const deleteButton = document.createElement('button');
     deleteButton.setAttribute('id', 'delete-review');
     deleteButton.innerHTML = 'Delete';
     deleteButton.addEventListener('click', (event) => {
       event.preventDefault();
-      if(review.id) {
+      if (review.id) {
         deleteReview(review.id);
       } else {
         deleteReview(review.createdAt);
@@ -298,11 +297,11 @@ getParameterByName = (name, url) => {
  * Convert to date string.
  * Based on https://stackoverflow.com/questions/11591854/format-date-to-mm-dd-yyyy-in-javascript
  */
-convertToDate = (time)=> {
+convertToDate = (time) => {
   const date = new Date(time);
   let wordMonth;
 
-  switch(date.getMonth()) {
+  switch (date.getMonth()) {
     case 0:
       wordMonth = 'January';
       break;
@@ -343,7 +342,7 @@ convertToDate = (time)=> {
 
   const dateString = `${wordMonth} ${date.getDate()}, ${date.getFullYear()}`;
   return dateString;
-}
+};
 
 /**
  * Reset form.
@@ -354,7 +353,7 @@ resetForm = (form) => {
   const textareas = form.getElementsByTagName('textarea');
 
   for (let i = 0; i < inputs.length; i++) {
-    switch(inputs[i].type) {
+    switch (inputs[i].type) {
       case 'text':
         inputs[i].value = '';
         break;
@@ -383,9 +382,9 @@ createSuccessAlert = (msg, success, id, position) => {
   const addReviewContainer = document.getElementById('review-form-container');
 
   // Only create an alert if one is not already existing
-  if(document.getElementById(id) === null) {
+  if (document.getElementById(id) === null) {
     const successAlert = document.createElement('div');
-    if(success) {
+    if (success) {
       successAlert.style.background = '#d4edda';
     } else {
       successAlert.style.background = '#f8d7da';
@@ -412,7 +411,7 @@ createSuccessAlert = (msg, success, id, position) => {
     });
     successAlertButtonGroup.appendChild(successAlertDimiss);
 
-    switch(position) {
+    switch (position) {
       case 'add':
         addReviewContainer.insertBefore(successAlert, addReviewContainer.firstChild);
         break;
@@ -454,7 +453,7 @@ postRequest = (event, form) => {
   updateReviews('add', null, reviewObject);
 
   DBHelper.postReviews(formData, self.reviews, (error, review) => {
-    if(error) {
+    if (error) {
       // Can still update and show new reviews, if offline
       ul.appendChild(createReviewHTML(reviewObject));
       resetForm(form);
@@ -479,7 +478,7 @@ deleteReview = (reviewId) => {
   updateReviews('delete', reviewId);
 
   DBHelper.deleteReview(reviewId, self.reviews, (error, review) => {
-    if(error) {
+    if (error) {
       reviewLi.parentNode.removeChild(reviewLi);
       return;
     }
@@ -490,7 +489,7 @@ deleteReview = (reviewId) => {
 };
 
 updateReviews = (action, id, data = {}) => {
-  switch(action) {
+  switch (action) {
     case 'add':
       self.reviews.push({
         restaurant_id: data.restaurant_id,

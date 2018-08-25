@@ -31,7 +31,7 @@ class DBHelper {
    */
   static fetchRestaurants(callback, id) {
     let restaurantToFetch;
-    if(id) {
+    if (id) {
       restaurantToFetch = `${DBHelper.DATABASE_URL}/restaurants/${id}`;
     } else {
       restaurantToFetch = `${DBHelper.DATABASE_URL}/restaurants`;
@@ -55,7 +55,7 @@ class DBHelper {
    */
   static fetchReviews(callback, restaurantId, id) {
     let reviewToFetch;
-    if(restaurantId) {
+    if (restaurantId) {
       reviewToFetch = `${DBHelper.DATABASE_URL}/reviews/?restaurant_id=${restaurantId}`;
     } else if (id) {
       reviewToFetch = `${DBHelper.DATABASE_URL}/reviews/${id}`;
@@ -240,7 +240,7 @@ class DBHelper {
   /**
    * Post reviews.
    */
-   static postReviews(formData, allReviews, callback) {
+  static postReviews(formData, allReviews, callback) {
     const reviewUrl = `${DBHelper.DATABASE_URL}/reviews/`;
     let formObject = {};
 
@@ -270,10 +270,10 @@ class DBHelper {
       });
    }
 
-   /**
+  /**
    * Delete reviews.
    */
-   static deleteReview(review, allReviews, callback) {
+  static deleteReview(review, allReviews, callback) {
     const reviewUrl = `${DBHelper.DATABASE_URL}/reviews/${review}`;
 
     // Send reviews to service worker
@@ -286,7 +286,7 @@ class DBHelper {
         return response.json();
       })
       .then((review) => {
-        if(!navigator.onLine) {
+        if (!navigator.onLine) {
           DBHelper.createOfflineDialog(null, 'You appear to be offline. Once your connection is restored, we\'ll sync your reviews.');
         }
         callback(null, review);
@@ -294,7 +294,7 @@ class DBHelper {
       .catch((error) => {
         callback(`Request failed. Returned status of ${error}`, null);
       });
-   }
+  }
 
   /**
    * Update favorited state of restaurants.
@@ -316,7 +316,7 @@ class DBHelper {
         return response.json();
       })
       .then((favorite) => {
-        if(!navigator.onLine) {
+        if (!navigator.onLine) {
           DBHelper.createOfflineDialog(previousElement, 'You appear to be offline. Once your connection is restored, we\'ll sync your favorites.');
         }
         return favorite;
@@ -339,7 +339,7 @@ class DBHelper {
     dismissButton.addEventListener('click', function(e) {
       const alert = document.getElementById('offline-dialog');
       alert.classList.add('hidden');
-      if(previousElement) {
+      if (previousElement) {
         previousElement.focus();
       }
     }, false);
