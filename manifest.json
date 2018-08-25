@@ -20,6 +20,6 @@
   "start_url": "/",
   "background_color": "#003459",
   "display": "standalone",
-  "scope": "/mws-restaurant-stage-1/",
+  "scope": "/",
   "theme_color": "#003459"
 }

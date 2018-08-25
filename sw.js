@@ -101,6 +101,36 @@ self.addEventListener('fetch', (event) => {
   }
 });
 
+const fetchAndUpdateFavorites = (event, id) => {
+  return fetch(event.request).then((response) => {
+      return response.json();
+    }).then((json) => {
+      return dbRestaurantsPromise.then((db) => {
+        var tx = db.transaction('favorites', 'readwrite');
+        var store = tx.objectStore('favorites').put({
+          id: id,
+          data: json
+        });
+        return json;
+      });
+    });
+};
+
+const fetchAndUpdateReviews = (event, id) => {
+  return fetch(event.request).then((response) => {
+      return response.json();
+    }).then((json) => {
+      return dbRestaurantsPromise.then((db) => {
+        var tx = db.transaction('reviews', 'readwrite');
+        var store = tx.objectStore('reviews').put({
+          restaurant_id: id,
+          data: json
+        });
+        return json;
+      });
+    });
+};
+
 const handleRestaurantDataRequest = (requestUrl, event) => {
   const params = requestUrl.pathname.split('/');
   const query = new URLSearchParams(requestUrl.search.slice(1));
@@ -116,23 +146,26 @@ const handleRestaurantDataRequest = (requestUrl, event) => {
       event.respondWith(dbRestaurantsPromise.then((db) => {
         return db.transaction('favorites', 'readonly').objectStore('favorites').get(id);
       }).then((data) => {
-          // Always attempt to fetch updated favorites
+        if (data && data.data) {
+          if (navigator.onLine) {
+            // Update favorites in the background
+            sendAndDeleteRequests(event, id, 'favorites');
+          }
+          return data.data;
+        } else {
           return fetch(event.request).then((response) => {
             return response.json();
           }).then((json) => {
-            // If back online, send off awaiting POST and favorite(PUT) requests
-            sendAndDeleteRequests();
             return dbRestaurantsPromise.then((db) => {
-                var tx = db.transaction('favorites', 'readwrite');
-                var store = tx.objectStore('favorites').put({
-                  id: id,
-                  data: json
-                });
-                return json;
+              var tx = db.transaction('favorites', 'readwrite');
+              var store = tx.objectStore('favorites').put({
+                id: id,
+                data: json
               });
-            }).catch((error) => {
-              return data.data;
+              return json;
             });
+          });
+        }
       }).then((finalResponse) => {
       return new Response(JSON.stringify(finalResponse));
     }).catch((error) => {
@@ -172,16 +205,20 @@ const handleRestaurantDataRequest = (requestUrl, event) => {
 const handleReviewDataRequest = (requestUrl, event) => {
   const params = requestUrl.searchParams;
   const id = params.get('restaurant_id');
-  console.log('handling GET review request');
-  // Always attempt to fetch updated reviews
+
   event.respondWith(dbRestaurantsPromise.then((db) => {
         return db.transaction('reviews', 'readonly').objectStore('reviews').get(id);
       }).then((data) => {
+        if (data && data.data) {
+          if (navigator.onLine) {
+            // Update reviews in the background
+            sendAndDeleteRequests(event, id, 'reviews');
+          }
+          return data.data;
+        } else {
           return fetch(event.request).then((response) => {
             return response.json();
           }).then((json) => {
-            // If back online, send off awaiting POST and PUT requests
-            sendAndDeleteRequests();
             return dbRestaurantsPromise.then((db) => {
               var tx = db.transaction('reviews', 'readwrite');
               var store = tx.objectStore('reviews').put({
@@ -190,9 +227,8 @@ const handleReviewDataRequest = (requestUrl, event) => {
               });
               return json;
             });
-          }).catch((error) => {
-            return data.data;
           });
+        }
       }).then((finalResponse) => {
       return new Response(JSON.stringify(finalResponse));
     }).catch((error) => {
@@ -222,8 +258,6 @@ const handlePutAndPostRequest = (requestUrl, event) => {
   // And update reviews store
 
   if(!navigator.onLine && method === 'POST') {
-    console.log('Handling POST request');
-    
     return dbRestaurantsPromise.then((db) => {
       var requestTx = db.transaction('requests', 'readwrite');
       var requestStore = requestTx.objectStore('requests').put({
@@ -245,7 +279,6 @@ const handlePutAndPostRequest = (requestUrl, event) => {
   // And update reviews store
 
   if(!navigator.onLine && method === 'DELETE') {
-    console.log('Handling DELETE request');
     return dbRestaurantsPromise.then((db) => {
       var requestTx = db.transaction('requests', 'readwrite');
       var requestStore = requestTx.objectStore('requests').put({
@@ -283,20 +316,24 @@ const handlePutAndPostRequest = (requestUrl, event) => {
   }
 };
 
-const sendAndDeleteRequests = () => {
+const sendAndDeleteRequests = (event, id, type) => {
   return dbRestaurantsPromise.then((db) => {
     var tx = db.transaction('requests', 'readwrite');
     var store = tx.objectStore('requests');
 
     store.iterateCursor(cursor => {
       if (!cursor) {
+        if (type === 'favorites') {
+          fetchAndUpdateFavorites(event, id);
+        } else if (type === 'reviews') {
+          fetchAndUpdateReviews(event, id);
+        }
         return;
       }
       const url = cursor.value.data;
       const method = cursor.value.requestType;
       const body = cursor.value.body;
       let options = {};
-      console.log('send and delete requests', cursor.value);
 
       cursor.delete();
       if(method === 'PUT' || method === 'DELETE') {
@@ -314,7 +351,12 @@ const sendAndDeleteRequests = () => {
           return response.json();
         })
         .then((item) => {
-          return item;
+          if (type === 'favorites') {
+            fetchAndUpdateFavorites(event, id);
+          } else if (type === 'reviews') {
+            fetchAndUpdateReviews(event, id);
+          }
+          // return item;
         })
         .catch((error) => {
           console.log(`Request failed. Returned status of ${error}`, null);

@@ -260,12 +260,10 @@ class DBHelper {
         return response.json();
       })
       .then((review) => {
-        if(!navigator.onLine) {
-          DBHelper.createOfflineDialog(null, 'You appear to be offline. Once your connection is restored, we\'ll sync your reviews.');
-        }
         callback(null, review);
       })
       .catch((error) => {
+        DBHelper.createOfflineDialog(null, 'You appear to be offline. Once your connection is restored, we\'ll sync your reviews.');
         callback(`Request failed. Returned status of ${error}`, null);
       });
    }
@@ -286,12 +284,10 @@ class DBHelper {
         return response.json();
       })
       .then((review) => {
-        if (!navigator.onLine) {
-          DBHelper.createOfflineDialog(null, 'You appear to be offline. Once your connection is restored, we\'ll sync your reviews.');
-        }
         callback(null, review);
       })
       .catch((error) => {
+        DBHelper.createOfflineDialog(null, 'You appear to be offline. Once your connection is restored, we\'ll sync your reviews.');
         callback(`Request failed. Returned status of ${error}`, null);
       });
   }
@@ -316,12 +312,10 @@ class DBHelper {
         return response.json();
       })
       .then((favorite) => {
-        if (!navigator.onLine) {
-          DBHelper.createOfflineDialog(previousElement, 'You appear to be offline. Once your connection is restored, we\'ll sync your favorites.');
-        }
         return favorite;
       })
       .catch((error) => {
+        DBHelper.createOfflineDialog(previousElement, 'You appear to be offline. Once your connection is restored, we\'ll sync your favorites.');
         console.log(`Request failed. Returned status of ${error}`, null);
       });
   }

@@ -125,6 +125,7 @@ createReviewForm = (restaurant) => {
   const reviewForm = document.createElement('form');
   reviewForm.setAttribute('id', 'review-form');
   reviewForm.setAttribute('method', 'POST');
+  reviewForm.setAttribute('role', 'form');
 
   const restaurantID = document.createElement('input');
   restaurantID.setAttribute('type', 'hidden');
