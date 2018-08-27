@@ -6,6 +6,7 @@
     "url": "https://github.com/anthkris/mws-restaurant-stage-1.git"
   },
   "devDependencies": {
+    "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
     "babelify": "^8.0.0",
     "grunt": "^0.4.5",
