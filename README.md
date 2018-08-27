@@ -50,22 +50,6 @@ I also used the Google Web Fundamentals article about web manifests to help me b
 
 ## Project Overview: Stage 3
 
-In stage two of the project, I added indexedDB to the site to index data delivered from the project sails server.
-
-## Tools Used
-
-- Grunt to allow for the use of node modules in the js
-- ESLint to ensure adherence to the Udacity style guides
-- Noun Project for a site icon to use with the manifest file
-
-## Acknowledgements
-
-I had a bit of trouble with the indexedDB portion at first. I got over the hump partly with the help of the Udacity webinar by Doug Brown: [https://www.youtube.com/watch?v=Q2CJYf_XA58](https://www.youtube.com/watch?v=Q2CJYf_XA58)
-
-I also used the Google Web Fundamentals article about web manifests to help me build a proper manifest: [https://developers.google.com/web/fundamentals/web-app-manifest/](https://developers.google.com/web/fundamentals/web-app-manifest/)
-
-## Project Overview: Stage 3
-
 In stage three of the project, I updated the app to allow user's to favorite restaurants and write/delete reviews, even if offline.
 
 ## Tools Used
