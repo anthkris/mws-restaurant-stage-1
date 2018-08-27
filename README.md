@@ -96,6 +96,7 @@ The steps were to:
 - Log into EC2 instance and install node and sails
 - Install necessary items for certbot and generate certificates
 - Update development or production config in Sails with SSL certificates and new port (443)
+- Update project database url with new port and url (Be sure to update any other checks that may have to do with the port or the url!)
 
 ### Resources
 
