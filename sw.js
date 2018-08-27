@@ -85,6 +85,8 @@ self.addEventListener('fetch', (event) => {
     }
   }
 
+  console.log(requestUrl);
+
   /* Based on the Doug Brown live webinar solution */
   if (requestUrl.port === '443' && request.method !== 'GET') {
     handlePutAndPostRequest(requestUrl, event);
