@@ -1,13 +1,13 @@
 import idb from 'idb';
 
-const STATICCACHENAME = 'mws-reviews-static-v3';
+const STATICCACHENAME = 'mws-reviews-static-v4';
 const CONTENTIMGSCACHE = 'mws-restaurant-imgs';
 const ALLCACHES = [
   STATICCACHENAME,
   CONTENTIMGSCACHE
 ];
 
-const dbRestaurantsPromise = idb.default.open('mws-restaurant-data', 1, (upgradeDB) => {
+const dbRestaurantsPromise = idb.default.open('mws-restaurant-data', 2, (upgradeDB) => {
   switch (upgradeDB.oldVersion) {
     case 0:
       upgradeDB.createObjectStore('restaurants', { keyPath: 'id' });

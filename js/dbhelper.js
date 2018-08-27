@@ -9,7 +9,7 @@ class DBHelper {
    */
   static get DATABASE_URL() {
     const port = 443; // Change this to your server port
-    return `https://api.knanthony.com/${port}`;
+    return `https://api.knanthony.com:${port}`;
   }
 
   /**
