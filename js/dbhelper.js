@@ -9,7 +9,7 @@ class DBHelper {
    */
   static get DATABASE_URL() {
     const port = 1337; // Change this to your server port
-    return `http://127.0.0.1:${port}`;
+    return `http://18.206.94.205:${port}`;
   }
 
   /**
