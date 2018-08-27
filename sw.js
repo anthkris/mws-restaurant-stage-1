@@ -86,11 +86,11 @@ self.addEventListener('fetch', (event) => {
   }
 
   /* Based on the Doug Brown live webinar solution */
-  if (requestUrl.port === '1337' && request.method !== 'GET') {
+  if (requestUrl.port === '443' && request.method !== 'GET') {
     handlePutAndPostRequest(requestUrl, event);
-  } else if (requestUrl.port === '1337' && requestUrl.pathname.startsWith('/restaurants')) {
+  } else if (requestUrl.port === '443' && requestUrl.pathname.startsWith('/restaurants')) {
     handleRestaurantDataRequest(requestUrl, event);
-  } else if (requestUrl.port === '1337' && requestUrl.pathname.startsWith('/reviews')) {
+  } else if (requestUrl.port === '443' && requestUrl.pathname.startsWith('/reviews')) {
     handleReviewDataRequest(requestUrl, event);
   } else {
     event.respondWith(
