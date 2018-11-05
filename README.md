@@ -94,3 +94,26 @@ The steps were to:
  - Remembering to change to port in the Sails config: [Article from ProCoefficient blog](http://www.procoefficient.com/blog/implementing-https-in-sailsjs-the-right-way/)
 
  You can test the app at: [https://ka-mws-project.netlify.com/](https://ka-mws-project.netlify.com/)
+ 
+ ## Updating the Let's Encrypt Cert
+ My current steps are to:
+ 
+ - Reboot AWS instance and log into instance
+ - Become root on AWS instance
+ - As root user, in Applications/mws-restaurant-stage-3 shut down forever instances using `forever stopall`
+ - As root user, in home/ubuntu, Renew cert using `./certbot-auto renew`
+ - As root user, in Applications/mws-restaurant-stage-3 start forever instance: `forever start -ae errors.log app.js --dev --port 443`
+
+### Note
+
+Current ssl config looks like (in Applications/mws-restaurant-stage-2/config/env/development.js):
+```
+// For some reason, adding ca key caused errors
+module.exports = {
+  ssl: {
+  key: require('fs').readFileSync('/etc/letsencrypt/live/yourdomain.com/privkey.pem'),
+  cert: require('fs').readFileSync('/etc/letsencrypt/live/yourdomain.com/cert.pem')
+},
+port: 443
+};
+```
