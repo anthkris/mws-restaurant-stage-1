@@ -98,7 +98,7 @@ The steps were to:
  ## Updating the Let's Encrypt Cert
  My current steps are to:
  
- - Reboot AWS instance and log into instance
+ - Log into AWS instance
  - Become root on AWS instance
  - As root user, in Applications/mws-restaurant-stage-3 shut down forever instances using `forever stopall`
  - As root user, in home/ubuntu, Renew cert using `./certbot-auto renew`
